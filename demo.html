@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo — JP Contracts | JP Dev Soluções Digitais</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+  <style>
+    .demo-header { background:linear-gradient(135deg,var(--black) 0%,#1e293b 100%); padding:120px 0 60px; text-align:center; }
+    .demo-header h1 { color:white; margin-bottom:12px; }
+    .demo-header p { color:rgba(255,255,255,.65); font-size:1.05rem; }
+    .demo-bar { background:linear-gradient(90deg,var(--blue-dark),var(--blue)); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .demo-bar p { color:white; font-size:0.85rem; font-weight:500; }
+    .demo-body { padding:40px 0 80px; background:var(--gray-light); }
+    .demo-sidebar { width:220px; background:var(--black); border-radius:14px; padding:16px 12px; flex-shrink:0; }
+    .demo-sidebar-logo { display:flex; align-items:center; gap:8px; color:white; font-weight:700; font-size:.9rem; padding:6px 10px 16px; border-bottom:1px solid rgba(255,255,255,.06); margin-bottom:10px; }
+    .demo-sidebar-logo img { width:30px; height:30px; object-fit:contain; filter:brightness(0) invert(1); }
+    .demo-nav-item { display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:8px; color:rgba(255,255,255,.55); font-size:.82rem; margin-bottom:3px; cursor:not-allowed; position:relative; }
+    .demo-nav-item.active { background:rgba(37,99,235,.25); color:var(--blue-light); cursor:pointer; }
+    .demo-nav-item .lock-icon { position:absolute; right:8px; font-size:.65rem; opacity:.4; }
+    .demo-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+    .demo-stat { background:white; border-radius:12px; padding:18px; border:1px solid var(--gray-mid); }
+    .demo-stat-val { font-family:var(--font-display); font-size:1.8rem; font-weight:800; color:var(--black); }
+    .demo-stat-label { font-size:.75rem; color:var(--gray-text); font-weight:500; margin-top:2px; }
+    .demo-table-card { background:white; border-radius:14px; border:1px solid var(--gray-mid); overflow:hidden; position:relative; }
+    .demo-table-card::after { content:''; position:absolute; bottom:0; left:0; right:0; height:60%; background:linear-gradient(to bottom,transparent,rgba(241,245,249,.95)); pointer-events:none; }
+    .demo-blur-actions { position:absolute; bottom:0; left:0; right:0; display:flex; align-items:center; justify-content:center; padding:24px; z-index:10; }
+    .upgrade-card { background:white; border-radius:16px; padding:28px 32px; text-align:center; box-shadow:var(--shadow-lg); max-width:420px; border:1.5px solid var(--blue-xlight); }
+    .upgrade-icon { font-size:2.5rem; margin-bottom:12px; }
+    .upgrade-card h3 { margin-bottom:8px; font-size:1.15rem; }
+    .upgrade-card p { font-size:.88rem; color:var(--gray-text); margin-bottom:20px; line-height:1.65; }
+    .demo-upgrade-banner { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); border-radius:var(--radius-lg); padding:28px 32px; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; color:white; margin-top:32px; }
+    .demo-upgrade-banner h3 { color:white; margin-bottom:4px; font-size:1.1rem; }
+    .demo-upgrade-banner p { color:rgba(255,255,255,.8); font-size:.88rem; }
+    @media(max-width:768px){ .demo-sidebar{display:none;} .demo-stats-grid{grid-template-columns:1fr 1fr;} }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="JP Dev Soluções Digitais" style="width:38px;height:38px;object-fit:contain;">
+      <span>JP <span class="brand">Contracts</span></span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Início</a>
+      <a href="sobre.html">Como funciona</a>
+      <a href="index.html#planos">Planos</a>
+      <a href="demo.html" class="active">Demo</a>
+      <a href="login.html">Login</a>
+    </div>
+    <div class="nav-cta">
+      <a href="login.html" class="btn btn-primary btn-sm">Começar grátis →</a>
+      <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="demo-header">
+  <div class="container-sm">
+    <span class="section-eyebrow" style="background:rgba(59,130,246,.2);color:var(--blue-light);">Demonstração</span>
+    <h1 class="display-lg" style="margin-top:12px;">Veja o JP Contracts<br>em ação</h1>
+    <p>Explore o sistema de forma limitada. Para acesso completo, escolha um plano.</p>
+  </div>
+</div>
+
+<div class="demo-bar">
+  <p>👁 <strong>Modo demonstração</strong> — Algumas funcionalidades estão bloqueadas. Crie sua conta para acesso total.</p>
+  <a href="index.html#planos" class="btn btn-white btn-sm">Ver planos →</a>
+</div>
+
+<section class="demo-body">
+  <div class="container">
+    <div class="alert alert-info" style="margin-bottom:18px;">🔔 <strong>2 contratos</strong> precisam de atenção. Veja o painel abaixo para detalhes.</div>
+
+    <div style="display:flex;gap:18px;align-items:flex-start;">
+      <div class="demo-sidebar">
+        <div class="demo-sidebar-logo">
+          <img src="logo.png" alt="JP Dev">
+          JP Contracts
+        </div>
+        <div class="demo-nav-item active">📊 <span>Dashboard</span></div>
+        <div class="demo-nav-item">📋 <span>Contratos</span><span class="lock-icon">🔒</span></div>
+        <div class="demo-nav-item">🔔 <span>Alertas</span><span class="lock-icon">🔒</span></div>
+        <div class="demo-nav-item">📈 <span>Relatórios</span><span class="lock-icon">🔒</span></div>
+        <div class="demo-nav-item">⚙️ <span>Configurações</span><span class="lock-icon">🔒</span></div>
+        <div style="margin-top:20px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06);">
+          <div style="font-size:.65rem;color:rgba(255,255,255,.25);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:0 10px 8px;">Demo limitado</div>
+          <a href="index.html#planos" class="btn btn-primary btn-sm btn-block" style="margin-top:6px;font-size:.78rem;">Desbloquear tudo →</a>
+        </div>
+      </div>
+
+      <div style="flex:1;">
+        <div style="background:white;border-radius:14px;border:1px solid var(--gray-mid);padding:14px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-family:var(--font-display);font-weight:700;font-size:1rem;">Painel de Controle</div>
+            <div style="font-size:.75rem;color:var(--gray-text);">Demonstração · Dados simulados</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="badge badge-warning">Modo Demo</span>
+            <div style="width:90px;height:36px;background:var(--blue);border-radius:9px;opacity:.3;"></div>
+          </div>
+        </div>
+
+        <div class="demo-stats-grid">
+          <div class="demo-stat"><div style="font-size:1.5rem;margin-bottom:8px;">📋</div><div class="demo-stat-val" style="color:var(--blue);">12</div><div class="demo-stat-label">Total de contratos</div></div>
+          <div class="demo-stat"><div style="font-size:1.5rem;margin-bottom:8px;">✅</div><div class="demo-stat-val" style="color:var(--success);">8</div><div class="demo-stat-label">Ativos</div></div>
+          <div class="demo-stat"><div style="font-size:1.5rem;margin-bottom:8px;">⚠️</div><div class="demo-stat-val" style="color:var(--warning);">2</div><div class="demo-stat-label">Vencendo em breve</div></div>
+          <div class="demo-stat"><div style="font-size:1.5rem;margin-bottom:8px;">🔴</div><div class="demo-stat-val" style="color:var(--danger);">2</div><div class="demo-stat-label">Vencidos</div></div>
+        </div>
+
+        <div style="background:white;border-radius:14px;border:1px solid var(--gray-mid);padding:18px;margin-bottom:18px;">
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:14px;">🔔 Alertas do sistema</div>
+          <div class="alert alert-warning" style="font-size:.85rem;">⚠️ <span><strong>Licença ERP</strong> — Grupo Sigma S.A. · Vence em <strong>7 dias</strong></span></div>
+          <div class="alert alert-danger" style="font-size:.85rem;">🔴 <span><strong>Consultoria Digital</strong> — Inovare · <strong>Venceu há 3 dias</strong></span></div>
+          <div class="alert alert-success" style="font-size:.85rem;margin-bottom:0;">✅ <span><strong>Contrato TI</strong> — TechCorp · Ativo · Vence em <strong>45 dias</strong></span></div>
+        </div>
+
+        <div class="demo-table-card" style="min-height:360px;">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--gray-mid);display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-weight:700;font-size:.9rem;">📋 Lista de contratos</span>
+            <span class="badge badge-gray">12 contratos</span>
+          </div>
+          <table class="contracts-table">
+            <thead>
+              <tr><th>Contrato</th><th>Empresa</th><th>Vencimento</th><th>Status</th><th>Valor</th><th>Ações</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div style="font-weight:600;">Contrato de Serviços TI</div></td>
+                <td><div style="color:var(--gray-text);font-size:.82rem;">TechCorp Ltda.</div></td>
+                <td>15/05/2026</td>
+                <td><span class="badge badge-success"><span class="status-dot dot-success"></span> Ativo</span></td>
+                <td style="font-weight:600;">R$ 8.500</td>
+                <td><div style="filter:blur(3px);pointer-events:none;display:flex;gap:6px;"><button class="btn btn-sm btn-secondary">👁 Ver</button><button class="btn btn-sm btn-danger">🗑</button></div></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;">Licença ERP Anual</div></td>
+                <td><div style="color:var(--gray-text);font-size:.82rem;">Grupo Sigma S.A.</div></td>
+                <td>29/03/2026</td>
+                <td><span class="badge badge-warning"><span class="status-dot dot-warning"></span> Vencendo</span></td>
+                <td style="font-weight:600;">R$ 24.000</td>
+                <td><div style="filter:blur(3px);pointer-events:none;display:flex;gap:6px;"><button class="btn btn-sm btn-secondary">👁 Ver</button><button class="btn btn-sm btn-danger">🗑</button></div></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;">Consultoria Estratégica</div></td>
+                <td><div style="color:var(--gray-text);font-size:.82rem;">Inovare Consult.</div></td>
+                <td>19/03/2026</td>
+                <td><span class="badge badge-danger"><span class="status-dot dot-danger"></span> Vencido</span></td>
+                <td style="font-weight:600;">R$ 5.200</td>
+                <td><div style="filter:blur(3px);pointer-events:none;display:flex;gap:6px;"><button class="btn btn-sm btn-secondary">👁 Ver</button><button class="btn btn-sm btn-danger">🗑</button></div></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;">Dev Plataforma E-comm</div></td>
+                <td><div style="color:var(--gray-text);font-size:.82rem;">StartUp Nexus</div></td>
+                <td>10/08/2026</td>
+                <td><span class="badge badge-success"><span class="status-dot dot-success"></span> Ativo</span></td>
+                <td style="font-weight:600;">R$ 12.800</td>
+                <td><div style="filter:blur(3px);pointer-events:none;display:flex;gap:6px;"><button class="btn btn-sm btn-secondary">👁 Ver</button><button class="btn btn-sm btn-danger">🗑</button></div></td>
+              </tr>
+              <tr><td style="filter:blur(4px);">██████████████</td><td style="filter:blur(4px);">███████████</td><td style="filter:blur(4px);">██/██/████</td><td style="filter:blur(4px);"><span class="badge badge-success">Ativo</span></td><td style="filter:blur(4px);">R$ ██.███</td><td></td></tr>
+              <tr><td style="filter:blur(4px);">██████████████</td><td style="filter:blur(4px);">███████████</td><td style="filter:blur(4px);">██/██/████</td><td style="filter:blur(4px);"><span class="badge badge-warning">Vencendo</span></td><td style="filter:blur(4px);">R$ ██.███</td><td></td></tr>
+            </tbody>
+          </table>
+          <div class="demo-blur-actions">
+            <div class="upgrade-card">
+              <div class="upgrade-icon">🔒</div>
+              <h3>Acesso completo bloqueado</h3>
+              <p>Para visualizar todos os contratos, adicionar novos e usar todas as funcionalidades, escolha um dos nossos planos.</p>
+              <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+                <a href="index.html#planos" class="btn btn-primary">Ver planos →</a>
+                <a href="login.html" class="btn btn-secondary">Entrar com conta</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-upgrade-banner">
+          <div>
+            <h3>🚀 Pronto para o acesso completo?</h3>
+            <p>Desbloqueie todos os recursos e comece a gerenciar seus contratos de verdade.</p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="index.html#planos" class="btn btn-white">Ver planos →</a>
+            <a href="login.html" class="btn btn-xl" style="background:rgba(255,255,255,.15);color:white;border:1.5px solid rgba(255,255,255,.3);">Criar conta grátis</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section contact-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="display-md">Precisa de ajuda?</h2>
+      <p>Fale com nossa equipe de suporte.</p>
+    </div>
+    <div class="contact-links">
+      <a href="https://wa.me/5548996656319" target="_blank" class="contact-link">
+        <span class="contact-link-icon">📱</span>
+        <div><div style="font-weight:600;font-size:.85rem;">WhatsApp</div><div style="font-size:.75rem;color:var(--gray-text);">+55 (48) 99656-6319</div></div>
+      </a>
+      <a href="https://instagram.com/jp.dev081019" target="_blank" class="contact-link">
+        <span class="contact-link-icon">📸</span>
+        <div><div style="font-weight:600;font-size:.85rem;">Instagram</div><div style="font-size:.75rem;color:var(--gray-text);">@jp.dev081019</div></div>
+      </a>
+      <a href="mailto:joao081019pedrodasilv@gmail.com" class="contact-link">
+        <span class="contact-link-icon">📧</span>
+        <div><div style="font-weight:600;font-size:.85rem;">Email</div><div style="font-size:.75rem;color:var(--gray-text);">joao081019pedrodasilv@gmail.com</div></div>
+      </a>
+      <a href="https://jpdevdigitalweb.netlify.app/" target="_blank" class="contact-link">
+        <span class="contact-link-icon">🌐</span>
+        <div><div style="font-weight:600;font-size:.85rem;">Site oficial</div><div style="font-size:.75rem;color:var(--gray-text);">jpdevdigitalweb.netlify.app</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 JP Dev Soluções Digitais. Todos os direitos reservados.</p>
+  <p>Desenvolvido por João Pedro da Silva</p>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>

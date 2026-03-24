@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — JP Contracts | JP Dev Soluções Digitais</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+  <style>
+    .value-highlight { font-family:var(--font-display); font-size:1.4rem; font-weight:800; color:var(--blue); }
+    .sidebar-toggle-mobile { display:none; position:fixed; bottom:24px; right:24px; z-index:200; width:52px; height:52px; border-radius:50%; background:var(--blue); color:white; font-size:1.3rem; border:none; box-shadow:var(--shadow-blue); cursor:pointer; align-items:center; justify-content:center; }
+    .progress-bar-wrap { height:6px; background:var(--gray-mid); border-radius:3px; overflow:hidden; margin-top:8px; }
+    .progress-bar { height:100%; border-radius:3px; transition:width .6s ease; }
+    .quick-action { display:flex; align-items:center; gap:12px; padding:14px 18px; background:white; border-radius:12px; border:1.5px solid var(--gray-mid); cursor:pointer; transition:var(--transition); font-size:.88rem; font-weight:500; color:var(--black-soft); }
+    .quick-action:hover { border-color:var(--blue); color:var(--blue); transform:translateY(-2px); box-shadow:var(--shadow-md); }
+    .user-email { color:rgba(255,255,255,.4); font-size:.7rem; }
+    @media(max-width:768px){ .sidebar-toggle-mobile{display:flex;} .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;} .sidebar-overlay.open{display:block;} #dashFooter{margin-left:0 !important;} }
+  </style>
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="JP Dev" style="width:34px;height:34px;object-fit:contain;filter:brightness(0) invert(1);">
+      <span>JP <span style="color:rgba(255,255,255,.5);">Contracts</span></span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <div class="sidebar-link active" data-section="dashboard"><span class="icon">📊</span> Dashboard</div>
+      <div class="sidebar-link" data-section="contracts"><span class="icon">📋</span> Contratos</div>
+      <div class="sidebar-link" data-section="alerts"><span class="icon">🔔</span> Alertas</div>
+      <div class="sidebar-section-label" style="margin-top:12px;">Análise</div>
+      <div class="sidebar-link" data-section="reports"><span class="icon">📈</span> Relatórios</div>
+      <div class="sidebar-link" data-section="settings"><span class="icon">⚙️</span> Configurações</div>
+      <div style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06);">
+        <a href="index.html" class="sidebar-link" style="color:rgba(255,255,255,.4);font-size:.8rem;"><span class="icon">🌐</span> Site público</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="logoutBtn" title="Clique para sair">
+        <div class="user-avatar">JP</div>
+        <div class="user-info">
+          <div class="user-name">João Pedro</div>
+          <div class="user-email">joao081019pedrodasilv@gmail.com</div>
+        </div>
+        <span style="margin-left:auto;font-size:.8rem;opacity:.4;">⏏</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="btn-icon" id="menuToggle" style="display:none;">☰</button>
+        <div>
+          <div class="topbar-title" id="topbarTitle">Dashboard</div>
+          <div class="topbar-bread" id="topbarBread">JP Contracts · Visão geral</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-sm" id="addContractBtn" style="background:var(--blue-xlight);color:var(--blue);font-weight:600;border:none;border-radius:9px;padding:0 14px;height:38px;">
+          ＋ Novo contrato
+        </button>
+        <button class="notif-btn">🔔<span class="notif-dot"></span></button>
+        <div class="user-avatar" style="width:34px;height:34px;cursor:pointer;" title="Sair" id="topbarLogout">JP</div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD BODY -->
+    <div class="dashboard-body">
+
+      <!-- Alerts strip -->
+      <div id="alertsContainer" style="margin-bottom:22px;"></div>
+
+      <!-- ===== SECTION: DASHBOARD ===== -->
+      <div id="section-dashboard" class="dash-section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-header"><div class="stat-icon stat-icon-blue">📋</div><span class="stat-trend up">↑ Total</span></div>
+            <div class="stat-value" id="stat-total">—</div>
+            <div class="stat-label">Contratos cadastrados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header"><div class="stat-icon stat-icon-green">✅</div><span class="stat-trend up">Regulares</span></div>
+            <div class="stat-value" id="stat-active" style="color:var(--success);">—</div>
+            <div class="stat-label">Contratos ativos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header"><div class="stat-icon stat-icon-orange">⚠️</div><span class="stat-trend" style="color:var(--warning);">Atenção</span></div>
+            <div class="stat-value" id="stat-expiring" style="color:var(--warning);">—</div>
+            <div class="stat-label">Vencendo em breve</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header"><div class="stat-icon stat-icon-red">🔴</div><span class="stat-trend down">Urgente</span></div>
+            <div class="stat-value" id="stat-expired" style="color:var(--danger);">—</div>
+            <div class="stat-label">Contratos vencidos</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;">
+          <div style="background:white;border-radius:var(--radius-lg);padding:24px;border:1px solid var(--gray-mid);">
+            <div style="font-size:.82rem;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">💰 Valor total em contratos</div>
+            <div class="value-highlight" id="stat-value">R$ —</div>
+            <div style="margin-top:16px;">
+              <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--gray-text);margin-bottom:4px;"><span>Ativos vs Total</span><span id="activePercent">—%</span></div>
+              <div class="progress-bar-wrap"><div class="progress-bar" id="activeBar" style="width:0%;background:linear-gradient(90deg,var(--success),#34d399);"></div></div>
+            </div>
+          </div>
+          <div style="background:white;border-radius:var(--radius-lg);padding:24px;border:1px solid var(--gray-mid);">
+            <div style="font-size:.82rem;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">⚡ Ações rápidas</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="quick-action" id="addContractBtn2"><span style="font-size:1.3rem;">➕</span><span>Adicionar novo contrato</span></div>
+              <div class="quick-action" onclick="document.querySelector('[data-section=contracts]').click();"><span style="font-size:1.3rem;">📋</span><span>Ver lista de contratos</span></div>
+              <div class="quick-action" onclick="document.querySelector('[data-section=alerts]').click();"><span style="font-size:1.3rem;">🔔</span><span>Verificar alertas</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">📋 Contratos recentes</div>
+            <div class="search-bar">
+              <span>🔍</span>
+              <input type="text" placeholder="Buscar contrato..." id="searchContracts">
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="contracts-table">
+              <thead><tr><th>Nome do contrato</th><th>Empresa</th><th>Vencimento</th><th>Status</th><th>Valor</th><th>Ações</th></tr></thead>
+              <tbody id="contractsTableBody"><tr><td colspan="6" style="padding:40px;text-align:center;color:var(--gray-text);">Carregando...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SECTION: CONTRACTS ===== -->
+      <div id="section-contracts" class="dash-section" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <div><h2 style="font-size:1.3rem;margin-bottom:4px;">Todos os Contratos</h2><p style="color:var(--gray-text);font-size:.88rem;">Gerencie, busque e monitore todos os seus contratos</p></div>
+          <button class="btn btn-primary" id="addContractBtnPage">➕ Novo contrato</button>
+        </div>
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">📋 Lista completa</div>
+            <div class="search-bar"><span>🔍</span><input type="text" placeholder="Buscar..." id="searchContractsPage" oninput="renderContractsList(this.value)"></div>
+          </div>
+          <div class="table-wrap">
+            <table class="contracts-table">
+              <thead><tr><th>Nome do contrato</th><th>Empresa</th><th>Vencimento</th><th>Status</th><th>Valor</th><th>Ações</th></tr></thead>
+              <tbody id="contractsTableBody2"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SECTION: ALERTS ===== -->
+      <div id="section-alerts" class="dash-section" style="display:none;">
+        <div style="margin-bottom:20px;"><h2 style="font-size:1.3rem;margin-bottom:4px;">Central de Alertas</h2><p style="color:var(--gray-text);font-size:.88rem;">Contratos que precisam de atenção imediata</p></div>
+        <div id="alertsStatsRow" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;"></div>
+        <div class="section-card" style="margin-bottom:18px;">
+          <div class="section-card-header"><div class="section-card-title">🔴 Contratos vencidos</div></div>
+          <div class="table-wrap"><table class="contracts-table"><thead><tr><th>Contrato</th><th>Empresa</th><th>Venceu em</th><th>Dias vencido</th><th>Valor</th><th>Ações</th></tr></thead><tbody id="expiredTableBody"></tbody></table></div>
+        </div>
+        <div class="section-card">
+          <div class="section-card-header"><div class="section-card-title">🟡 Vencendo nos próximos 15 dias</div></div>
+          <div class="table-wrap"><table class="contracts-table"><thead><tr><th>Contrato</th><th>Empresa</th><th>Vence em</th><th>Dias restantes</th><th>Valor</th><th>Ações</th></tr></thead><tbody id="expiringTableBody"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- ===== SECTION: REPORTS ===== -->
+      <div id="section-reports" class="dash-section" style="display:none;">
+        <div style="margin-bottom:20px;"><h2 style="font-size:1.3rem;margin-bottom:4px;">Relatórios</h2><p style="color:var(--gray-text);font-size:.88rem;">Análise completa dos seus contratos</p></div>
+        <div id="reportStats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:24px;"></div>
+        <div class="section-card">
+          <div class="section-card-header"><div class="section-card-title">📊 Distribuição por status</div></div>
+          <div style="padding:24px;"><div id="reportChart" style="display:flex;flex-direction:column;gap:14px;"></div></div>
+        </div>
+      </div>
+
+      <!-- ===== SECTION: SETTINGS ===== -->
+      <div id="section-settings" class="dash-section" style="display:none;">
+        <div style="margin-bottom:20px;"><h2 style="font-size:1.3rem;margin-bottom:4px;">Configurações</h2><p style="color:var(--gray-text);font-size:.88rem;">Personalize sua experiência no JP Contracts</p></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <div class="section-card">
+            <div class="section-card-header"><div class="section-card-title">👤 Perfil</div></div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+              <div class="form-group" style="margin:0;"><label class="form-label">Nome completo</label><input class="form-input" type="text" value="João Pedro da Silva"></div>
+              <div class="form-group" style="margin:0;"><label class="form-label">Email</label><input class="form-input" type="email" value="joao081019pedrodasilv@gmail.com"></div>
+              <button class="btn btn-primary btn-sm" onclick="showToast('✅ Perfil salvo com sucesso!')">Salvar alterações</button>
+            </div>
+          </div>
+          <div class="section-card">
+            <div class="section-card-header"><div class="section-card-title">🔔 Notificações</div></div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.88rem;cursor:pointer;"><span>Alertas de vencimento</span><input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--blue);"></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.88rem;cursor:pointer;"><span>Notificações por email</span><input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--blue);"></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.88rem;cursor:pointer;"><span>Alertas 15 dias antes</span><input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--blue);"></label>
+              <button class="btn btn-primary btn-sm" onclick="showToast('✅ Notificações salvas!')">Salvar</button>
+            </div>
+          </div>
+          <div class="section-card" style="grid-column:1/-1;">
+            <div class="section-card-header"><div class="section-card-title">⚠️ Zona de risco</div></div>
+            <div style="padding:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+              <div><div style="font-weight:600;margin-bottom:4px;">Limpar todos os contratos</div><div style="font-size:.83rem;color:var(--gray-text);">Esta ação remove permanentemente todos os contratos cadastrados.</div></div>
+              <button class="btn btn-danger btn-sm" onclick="if(confirm('Tem certeza? Esta ação é irreversível!')){localStorage.removeItem('jpdev_contracts');renderDashboard();showToast('🗑 Todos os contratos foram removidos.');}">🗑 Limpar dados</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /dashboard-body -->
+  </div><!-- /main-content -->
+</div><!-- /dashboard-layout -->
+
+<!-- ADD CONTRACT MODAL -->
+<div class="modal-overlay" id="addContractModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">➕ Novo Contrato</div>
+      <button class="modal-close" id="closeModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="addContractForm">
+        <div class="modal-form-row">
+          <div class="form-group"><label class="form-label">Nome do contrato *</label><input class="form-input" type="text" name="name" placeholder="Ex: Contrato de Suporte TI" required></div>
+          <div class="form-group"><label class="form-label">Empresa *</label><input class="form-input" type="text" name="company" placeholder="Ex: TechCorp Ltda." required></div>
+        </div>
+        <div class="modal-form-row">
+          <div class="form-group"><label class="form-label">Data de início *</label><input class="form-input" type="date" name="startDate" required></div>
+          <div class="form-group"><label class="form-label">Data de vencimento *</label><input class="form-input" type="date" name="endDate" required></div>
+        </div>
+        <div class="modal-form-row">
+          <div class="form-group"><label class="form-label">Valor (R$)</label><input class="form-input" type="number" name="value" placeholder="0,00" step="0.01" min="0"></div>
+          <div class="form-group">
+            <label class="form-label">Categoria</label>
+            <select class="form-input" name="category">
+              <option value="servicos">Serviços</option>
+              <option value="licenca">Licença/Software</option>
+              <option value="consultoria">Consultoria</option>
+              <option value="desenvolvimento">Desenvolvimento</option>
+              <option value="fornecedor">Fornecedor</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Descrição (opcional)</label><textarea class="form-input" name="description" rows="3" placeholder="Detalhes adicionais sobre este contrato..." style="resize:vertical;"></textarea></div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:8px;border-top:1px solid var(--gray-mid);">
+          <button type="button" class="btn btn-secondary" id="cancelModal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">✅ Salvar contrato</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW CONTRACT MODAL -->
+<div class="modal-overlay" id="viewContractModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📋 Detalhes do Contrato</div>
+      <button class="modal-close" onclick="closeViewModal()">✕</button>
+    </div>
+    <div class="modal-body" id="viewContractContent"></div>
+  </div>
+</div>
+
+<!-- Mobile FAB -->
+<button class="sidebar-toggle-mobile" id="mobileSidebarBtn">☰</button>
+
+<!-- FOOTER -->
+<div id="dashFooter" style="background:var(--gray-light);border-top:1px solid var(--gray-mid);padding:16px 28px;margin-left:260px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    <a href="https://wa.me/5548996656319" target="_blank" class="contact-link" style="padding:8px 12px;font-size:.78rem;">📱 +55 (48) 99656-6319</a>
+    <a href="https://instagram.com/jp.dev081019" target="_blank" class="contact-link" style="padding:8px 12px;font-size:.78rem;">📸 @jp.dev081019</a>
+    <a href="mailto:joao081019pedrodasilv@gmail.com" class="contact-link" style="padding:8px 12px;font-size:.78rem;">📧 Email</a>
+    <a href="https://jpdevdigitalweb.netlify.app/" target="_blank" class="contact-link" style="padding:8px 12px;font-size:.78rem;">🌐 jpdevdigitalweb.netlify.app</a>
+  </div>
+  <div style="font-size:.75rem;color:var(--gray-text);">© 2026 JP Dev Soluções Digitais · Desenvolvido por João Pedro da Silva</div>
+</div>
+
+<script src="js/script.js"></script>
+<script>
+  // Mobile sidebar
+  var mobileBtn   = document.getElementById('mobileSidebarBtn');
+  var sidebarEl   = document.getElementById('sidebar');
+  var overlayEl   = document.getElementById('sidebarOverlay');
+  var menuToggle  = document.getElementById('menuToggle');
+
+  function toggleSidebar() { sidebarEl.classList.toggle('open'); overlayEl.classList.toggle('open'); }
+  mobileBtn  && mobileBtn.addEventListener('click', toggleSidebar);
+  menuToggle && menuToggle.addEventListener('click', toggleSidebar);
+  overlayEl  && overlayEl.addEventListener('click', toggleSidebar);
+
+  if (window.innerWidth <= 768) {
+    menuToggle && (menuToggle.style.display = 'flex');
+    var df = document.getElementById('dashFooter');
+    if (df) df.style.marginLeft = '0';
+  }
+
+  // Topbar logout
+  document.getElementById('topbarLogout') && document.getElementById('topbarLogout').addEventListener('click', function() {
+    sessionStorage.removeItem('jpdev_user'); window.location.href = 'login.html';
+  });
+
+  // Add contract buttons
+  ['addContractBtn','addContractBtn2','addContractBtnPage'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('click', function() { document.getElementById('addContractModal').classList.add('open'); });
+  });
+
+  // Cancel & close modal
+  document.getElementById('cancelModal') && document.getElementById('cancelModal').addEventListener('click', function() {
+    document.getElementById('addContractModal').classList.remove('open');
+    document.getElementById('addContractForm').reset();
+  });
+  document.getElementById('closeModal') && document.getElementById('closeModal').addEventListener('click', function() {
+    document.getElementById('addContractModal').classList.remove('open');
+    document.getElementById('addContractForm').reset();
+  });
+
+  // Set today as default start date
+  var startInput = document.querySelector('[name="startDate"]');
+  if (startInput) startInput.value = new Date().toISOString().split('T')[0];
+
+  // Sidebar navigation
+  document.querySelectorAll('[data-section]').forEach(function(link) {
+    link.addEventListener('click', function() {
+      var section = this.dataset.section;
+      var titles = {
+        dashboard: ['Dashboard', 'JP Contracts · Visão geral'],
+        contracts: ['Contratos', 'JP Contracts · Todos os contratos'],
+        alerts:    ['Alertas',   'JP Contracts · Central de alertas'],
+        reports:   ['Relatórios','JP Contracts · Análise e relatórios'],
+        settings:  ['Configurações','JP Contracts · Configurações']
+      };
+      if (titles[section]) {
+        document.getElementById('topbarTitle').textContent  = titles[section][0];
+        document.getElementById('topbarBread').textContent = titles[section][1];
+      }
+      document.querySelectorAll('.dash-section').forEach(function(s) { s.style.display = 'none'; });
+      var target = document.getElementById('section-' + section);
+      if (target) target.style.display = 'block';
+      document.querySelectorAll('[data-section]').forEach(function(l) { l.classList.remove('active'); });
+      this.classList.add('active');
+
+      if (section === 'contracts') {
+        var tb2 = document.getElementById('contractsTableBody2');
+        if (tb2) renderTableIntoBody(tb2);
+      }
+      if (section === 'alerts')  renderAlertsSection();
+      if (section === 'reports') renderReports();
+
+      if (window.innerWidth <= 768) { sidebarEl.classList.remove('open'); overlayEl.classList.remove('open'); }
+    });
+  });
+
+  // Render contracts into a specific tbody
+  function renderTableIntoBody(tbody, search) {
+    var contracts = ContractStore.getAll();
+    var filtered = search ? contracts.filter(function(c) {
+      return c.name.toLowerCase().includes(search.toLowerCase()) || c.company.toLowerCase().includes(search.toLowerCase());
+    }) : contracts;
+
+    if (!filtered.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Nenhum contrato encontrado</div><div class="empty-desc">Adicione seu primeiro contrato</div></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = filtered.map(function(c) {
+      var s = getContractStatus(c.endDate);
+      var daysText = s.days < 0 ? 'Vencido há ' + Math.abs(s.days) + ' dias' : 'Vence em ' + s.days + ' dias';
+      return '<tr>' +
+        '<td><div style="font-weight:600;">' + c.name + '</div></td>' +
+        '<td><div style="color:var(--gray-text);font-size:.82rem;">' + c.company + '</div></td>' +
+        '<td>' + formatDate(c.endDate) + '</td>' +
+        '<td><span class="badge ' + s.class + '"><span class="status-dot ' + s.dot + '"></span>' + s.label + '</span><div style="font-size:.72rem;color:var(--gray-text);margin-top:3px;">' + daysText + '</div></td>' +
+        '<td style="font-weight:600;">' + formatCurrency(c.value) + '</td>' +
+        '<td><div class="table-actions"><button class="btn btn-sm btn-secondary" onclick="viewContract(' + c.id + ')">👁 Ver</button><button class="btn btn-sm btn-danger" onclick="deleteContract(' + c.id + ')">🗑</button></div></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  // Alerts section
+  function renderAlertsSection() {
+    var contracts = ContractStore.getAll();
+    var expired  = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Vencido'; });
+    var expiring = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Vencendo'; });
+    var ok = contracts.length - expired.length - expiring.length;
+
+    var statsRow = document.getElementById('alertsStatsRow');
+    if (statsRow) {
+      statsRow.innerHTML =
+        '<div style="background:white;border-radius:12px;padding:18px;border:1.5px solid #fee2e2;text-align:center;"><div style="font-size:2rem;font-weight:800;color:var(--danger);">' + expired.length + '</div><div style="font-size:.8rem;color:var(--gray-text);">Contratos vencidos</div></div>' +
+        '<div style="background:white;border-radius:12px;padding:18px;border:1.5px solid #fef3c7;text-align:center;"><div style="font-size:2rem;font-weight:800;color:var(--warning);">' + expiring.length + '</div><div style="font-size:.8rem;color:var(--gray-text);">Vencendo em breve</div></div>' +
+        '<div style="background:white;border-radius:12px;padding:18px;border:1.5px solid #d1fae5;text-align:center;"><div style="font-size:2rem;font-weight:800;color:var(--success);">' + ok + '</div><div style="font-size:.8rem;color:var(--gray-text);">Contratos regulares</div></div>';
+    }
+
+    var expiredBody = document.getElementById('expiredTableBody');
+    if (expiredBody) {
+      expiredBody.innerHTML = expired.length === 0
+        ? '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🎉</div><div class="empty-title">Nenhum contrato vencido!</div></div></td></tr>'
+        : expired.map(function(c) {
+            var s = getContractStatus(c.endDate);
+            return '<tr><td style="font-weight:600;">' + c.name + '</td><td style="color:var(--gray-text);">' + c.company + '</td><td>' + formatDate(c.endDate) + '</td><td><span class="badge badge-danger">' + Math.abs(s.days) + ' dias</span></td><td style="font-weight:600;">' + formatCurrency(c.value) + '</td><td><div class="table-actions"><button class="btn btn-sm btn-secondary" onclick="viewContract(' + c.id + ')">👁 Ver</button><button class="btn btn-sm btn-danger" onclick="deleteContract(' + c.id + ');renderAlertsSection();">🗑</button></div></td></tr>';
+          }).join('');
+    }
+
+    var expiringBody = document.getElementById('expiringTableBody');
+    if (expiringBody) {
+      expiringBody.innerHTML = expiring.length === 0
+        ? '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">Nenhum contrato vencendo em breve!</div></div></td></tr>'
+        : expiring.map(function(c) {
+            var s = getContractStatus(c.endDate);
+            return '<tr><td style="font-weight:600;">' + c.name + '</td><td style="color:var(--gray-text);">' + c.company + '</td><td>' + formatDate(c.endDate) + '</td><td><span class="badge badge-warning">' + s.days + ' dias</span></td><td style="font-weight:600;">' + formatCurrency(c.value) + '</td><td><div class="table-actions"><button class="btn btn-sm btn-secondary" onclick="viewContract(' + c.id + ')">👁 Ver</button></div></td></tr>';
+          }).join('');
+    }
+  }
+
+  // Reports section
+  function renderReports() {
+    var contracts = ContractStore.getAll();
+    var active  = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Ativo'; });
+    var expiring = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Vencendo'; });
+    var expired = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Vencido'; });
+    var totalVal = contracts.reduce(function(s,c) { return s + (parseFloat(c.value)||0); }, 0);
+    var actPct = contracts.length ? Math.round((active.length/contracts.length)*100) : 0;
+
+    var rs = document.getElementById('reportStats');
+    if (rs) rs.innerHTML =
+      '<div style="background:white;border-radius:var(--radius-lg);padding:22px;border:1px solid var(--gray-mid);"><div style="font-size:.75rem;color:var(--gray-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Total em carteira</div><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--blue);">' + formatCurrency(totalVal) + '</div></div>' +
+      '<div style="background:white;border-radius:var(--radius-lg);padding:22px;border:1px solid var(--gray-mid);"><div style="font-size:.75rem;color:var(--gray-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Taxa de atividade</div><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--success);">' + actPct + '%</div></div>' +
+      '<div style="background:white;border-radius:var(--radius-lg);padding:22px;border:1px solid var(--gray-mid);"><div style="font-size:.75rem;color:var(--gray-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Média por contrato</div><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--black);">' + formatCurrency(contracts.length ? totalVal/contracts.length : 0) + '</div></div>';
+
+    var rc = document.getElementById('reportChart');
+    if (rc && contracts.length) {
+      var bars = [
+        { label:'✅ Ativos', count:active.length, color:'var(--success)' },
+        { label:'⚠️ Vencendo em breve', count:expiring.length, color:'var(--warning)' },
+        { label:'🔴 Vencidos', count:expired.length, color:'var(--danger)' }
+      ];
+      rc.innerHTML = bars.map(function(b) {
+        var pct = Math.round((b.count/contracts.length)*100);
+        return '<div><div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px;"><span style="font-weight:500;">' + b.label + '</span><span style="font-weight:700;">' + b.count + ' (' + pct + '%)</span></div><div class="progress-bar-wrap" style="height:10px;"><div class="progress-bar" style="width:' + pct + '%;background:' + b.color + ';"></div></div></div>';
+      }).join('');
+    }
+  }
+
+  // Update progress bar after render
+  var origRD = window.renderDashboard;
+  window.renderDashboard = function() {
+    if (origRD) origRD();
+    setTimeout(function() {
+      var contracts = ContractStore.getAll();
+      var active = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Ativo'; }).length;
+      var pct = contracts.length ? Math.round((active/contracts.length)*100) : 0;
+      var bar = document.getElementById('activeBar'); if (bar) bar.style.width = pct + '%';
+      var lbl = document.getElementById('activePercent'); if (lbl) lbl.textContent = pct + '%';
+    }, 150);
+  };
+
+  // Search on contracts page
+  var sp = document.getElementById('searchContractsPage');
+  if (sp) sp.addEventListener('input', function() {
+    var tb2 = document.getElementById('contractsTableBody2');
+    if (tb2) renderTableIntoBody(tb2, this.value);
+  });
+
+  // Main search
+  var sc = document.getElementById('searchContracts');
+  if (sc) sc.addEventListener('input', function() { renderContractsList(this.value); });
+
+  // View modal close on overlay
+  document.getElementById('viewContractModal') && document.getElementById('viewContractModal').addEventListener('click', function(e) {
+    if (e.target === this) closeViewModal();
+  });
+  document.getElementById('addContractModal') && document.getElementById('addContractModal').addEventListener('click', function(e) {
+    if (e.target === this) { this.classList.remove('open'); document.getElementById('addContractForm').reset(); }
+  });
+</script>
+</body>
+</html>

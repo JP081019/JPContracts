@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JP Contracts — Gestão de Contratos | JP Dev Soluções Digitais</title>
+  <meta name="description" content="Sistema moderno para gestão de contratos. Evite prejuízos, controle prazos e receba alertas automáticos. Experimente grátis.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="JP Dev Soluções Digitais" style="width:38px;height:38px;object-fit:contain;">
+      <span>JP <span class="brand">Contracts</span></span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html" class="active">Início</a>
+      <a href="sobre.html">Como funciona</a>
+      <a href="#planos">Planos</a>
+      <a href="demo.html">Demo</a>
+      <a href="login.html">Login</a>
+    </div>
+    <div class="nav-cta">
+      <a href="login.html" class="btn btn-primary btn-sm">Começar grátis →</a>
+      <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="container">
+    <div class="grid-2">
+      <div class="fade-in-up">
+        <div class="hero-eyebrow"><span class="dot"></span>Novo: Alertas inteligentes v2.0</div>
+        <h1 class="display-xl">Controle seus<br>contratos sem<br><span class="highlight">esforço</span></h1>
+        <p class="hero-desc">Evite prejuízos, vencimentos inesperados e desorganização. Tenha total controle dos seus contratos em poucos cliques.</p>
+        <div class="hero-actions">
+          <a href="login.html" class="btn btn-primary btn-xl">🚀 Começar agora — grátis</a>
+          <a href="demo.html" class="btn btn-secondary btn-xl">👁 Ver demo</a>
+        </div>
+        <div class="hero-social-proof">
+          <div class="avatars">
+            <div class="avatar-placeholder" style="margin-left:0;">JS</div>
+            <div class="avatar-placeholder">MR</div>
+            <div class="avatar-placeholder">KL</div>
+            <div class="avatar-placeholder" style="font-size:0.6rem;">+99</div>
+          </div>
+          <p class="social-proof-text">Mais de <strong>500 empresas</strong> já confiam no JP Contracts</p>
+        </div>
+      </div>
+      <div class="hero-visual fade-in-up-2">
+        <div class="mockup-browser">
+          <div class="mockup-browser-bar">
+            <div class="mockup-dots"><span></span><span></span><span></span></div>
+            <div class="mockup-url">jpcontracts.jpdevdigitalweb.netlify.app/dashboard</div>
+          </div>
+          <div class="mockup-content">
+            <div class="mini-dashboard">
+              <div class="mini-stat"><div class="mini-stat-label">Total</div><div class="mini-stat-value blue">24</div></div>
+              <div class="mini-stat"><div class="mini-stat-label">Ativos</div><div class="mini-stat-value green">18</div></div>
+              <div class="mini-stat"><div class="mini-stat-label">Alertas</div><div class="mini-stat-value orange">3</div></div>
+            </div>
+            <div class="mini-contracts">
+              <div class="mini-contract-header">
+                <span class="mini-contract-title">Contratos recentes</span>
+                <span class="badge badge-blue" style="font-size:0.62rem;">Ao vivo</span>
+              </div>
+              <div class="mini-contract-item">
+                <div class="mini-contract-info"><div class="mini-contract-name">Contrato TI Suporte</div><div class="mini-contract-company">TechCorp Ltda.</div></div>
+                <span class="badge badge-success" style="font-size:0.62rem;"><span class="status-dot dot-success"></span> Ativo</span>
+              </div>
+              <div class="mini-contract-item">
+                <div class="mini-contract-info"><div class="mini-contract-name">Licença ERP Anual</div><div class="mini-contract-company">Grupo Sigma S.A.</div></div>
+                <span class="badge badge-warning" style="font-size:0.62rem;"><span class="status-dot dot-warning"></span> Vencendo</span>
+              </div>
+              <div class="mini-contract-item">
+                <div class="mini-contract-info"><div class="mini-contract-name">Consultoria Digital</div><div class="mini-contract-company">Inovare Consult.</div></div>
+                <span class="badge badge-success" style="font-size:0.62rem;"><span class="status-dot dot-success"></span> Ativo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="float-badge float-badge-1">
+          <span class="float-badge-icon">🔔</span>
+          <div><div style="font-size:0.72rem;color:var(--gray-text);">Alerta automático</div><div style="font-size:0.8rem;">Vence em 7 dias!</div></div>
+        </div>
+        <div class="float-badge float-badge-2">
+          <span class="float-badge-icon">✅</span>
+          <div><div style="font-size:0.72rem;color:var(--gray-text);">Contrato salvo</div><div style="font-size:0.8rem;">Renovação agendada</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<section style="background:var(--blue);padding:40px 0;">
+  <div class="container">
+    <div class="grid-4" style="text-align:center;">
+      <div>
+        <div style="font-family:var(--font-display);font-size:2.2rem;font-weight:800;color:white;" data-counter="500">0</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:0.88rem;margin-top:4px;">Empresas ativas</div>
+      </div>
+      <div>
+        <div style="font-family:var(--font-display);font-size:2.2rem;font-weight:800;color:white;" data-counter="12400">0</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:0.88rem;margin-top:4px;">Contratos gerenciados</div>
+      </div>
+      <div>
+        <div style="font-family:var(--font-display);font-size:2.2rem;font-weight:800;color:white;" data-counter="99">0</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:0.88rem;margin-top:4px;">% de uptime</div>
+      </div>
+      <div>
+        <div style="font-family:var(--font-display);font-size:2.2rem;font-weight:800;color:white;" data-counter="4800">0</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:0.88rem;margin-top:4px;">Alertas enviados</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMS -->
+<section class="section problems-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">O Problema</div>
+      <h2 class="display-md">Você está perdendo dinheiro<br>com contratos esquecidos?</h2>
+      <p>Multas, renovações automáticas indesejadas e oportunidades perdidas custam caro às empresas.</p>
+    </div>
+    <div class="grid-3">
+      <div class="problem-card reveal">
+        <div class="problem-icon">📁</div>
+        <h3>Contratos perdidos</h3>
+        <p>Documentos espalhados em pastas, emails e gavetas. Impossível encontrar quando precisa.</p>
+      </div>
+      <div class="problem-card reveal" style="transition-delay:0.1s;">
+        <div class="problem-icon">⏰</div>
+        <h3>Prazos ignorados</h3>
+        <p>Vencimentos passam despercebidos gerando multas, renovações indesejadas e problemas jurídicos.</p>
+      </div>
+      <div class="problem-card reveal" style="transition-delay:0.2s;">
+        <div class="problem-icon">💸</div>
+        <h3>Prejuízo financeiro</h3>
+        <p>Empresas perdem em média R$ 18.000/ano com má gestão contratual. Um custo desnecessário.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="section" style="background:var(--gray-light);">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">A Solução</div>
+      <h2 class="display-md">JP Contracts resolve<br>tudo isso automaticamente</h2>
+      <p>Uma plataforma intuitiva que organiza, monitora e alerta você sobre cada contrato da sua empresa.</p>
+    </div>
+    <div class="grid-3">
+      <div class="solution-card reveal"><div class="solution-icon">📂</div><h3>Organização total</h3><p>Todos os seus contratos em um só lugar, organizados, pesquisáveis e acessíveis de qualquer dispositivo.</p></div>
+      <div class="solution-card reveal" style="transition-delay:0.1s;"><div class="solution-icon">🔔</div><h3>Alertas automáticos</h3><p>Receba notificações antes do vencimento. Nunca mais seja pego de surpresa com vencimentos.</p></div>
+      <div class="solution-card reveal" style="transition-delay:0.2s;"><div class="solution-icon">📊</div><h3>Painel intuitivo</h3><p>Visualize o status de todos os contratos num relance. Dashboard limpo com indicadores visuais claros.</p></div>
+      <div class="solution-card reveal" style="transition-delay:0.3s;"><div class="solution-icon">🔒</div><h3>Segurança garantida</h3><p>Seus dados protegidos com criptografia de ponta e backup automático. Privacidade total.</p></div>
+      <div class="solution-card reveal" style="transition-delay:0.4s;"><div class="solution-icon">📱</div><h3>Acesso mobile</h3><p>Funciona perfeitamente no celular, tablet e desktop. Gerencie contratos de onde estiver.</p></div>
+      <div class="solution-card reveal" style="transition-delay:0.5s;"><div class="solution-icon">⚡</div><h3>Setup em minutos</h3><p>Comece a usar em menos de 5 minutos. Interface intuitiva que não exige treinamento.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="como-funciona">
+  <div class="container">
+    <div class="grid-2">
+      <div class="reveal">
+        <div class="section-eyebrow">Como funciona</div>
+        <h2 class="display-md" style="margin-bottom:16px;">Simples assim.<br>Cadastre e esqueça.</h2>
+        <p style="color:var(--gray-text);margin-bottom:40px;font-size:1rem;line-height:1.7;">Em 3 passos simples você passa a ter controle total sobre todos os seus contratos.</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content"><h3>Cadastre seus contratos</h3><p>Adicione nome, empresa, valor e datas em menos de 1 minuto. Interface super simples.</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content"><h3>Acompanhe os prazos</h3><p>O sistema monitora automaticamente todos os vencimentos e atualiza o status em tempo real.</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content"><h3>Receba alertas</h3><p>Notificações automáticas antes do vencimento. Você decide quando agir, sem surpresas.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay:0.2s;display:flex;justify-content:center;">
+        <div style="background:var(--gray-light);border-radius:20px;padding:28px;width:100%;max-width:380px;">
+          <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-family:var(--font-display);font-weight:700;font-size:0.9rem;">📊 Painel de controle</span>
+            <span class="badge badge-blue">Ao vivo</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+            <div style="background:white;border-radius:10px;padding:14px;text-align:center;">
+              <div style="font-size:1.6rem;font-weight:800;font-family:var(--font-display);color:var(--blue);">12</div>
+              <div style="font-size:0.72rem;color:var(--gray-text);">Contratos ativos</div>
+            </div>
+            <div style="background:white;border-radius:10px;padding:14px;text-align:center;">
+              <div style="font-size:1.6rem;font-weight:800;font-family:var(--font-display);color:var(--warning);">2</div>
+              <div style="font-size:0.72rem;color:var(--gray-text);">Vencendo</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-text);margin-bottom:2px;">Alertas recentes</div>
+            <div style="background:#fef3c7;border-left:3px solid var(--warning);border-radius:8px;padding:10px 12px;font-size:0.78rem;color:#92400e;">⚠️ <strong>Licença Adobe CC</strong> vence em 5 dias</div>
+            <div style="background:#fee2e2;border-left:3px solid var(--danger);border-radius:8px;padding:10px 12px;font-size:0.78rem;color:#991b1b;">🔴 <strong>Contrato Fornecedor</strong> venceu há 2 dias</div>
+            <div style="background:#d1fae5;border-left:3px solid var(--success);border-radius:8px;padding:10px 12px;font-size:0.78rem;color:#065f46;">✅ <strong>Renovação TI</strong> concluída com sucesso</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background:var(--gray-light);">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Depoimentos</div>
+      <h2 class="display-md">Quem usa, aprova</h2>
+    </div>
+    <div class="grid-3">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">O JP Contracts salvou nossa empresa de pagar R$ 8.000 em multa por renovação automática. Os alertas são incríveis.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">MR</div>
+          <div><div class="author-name">Marcos Rocha</div><div class="author-role">CEO · Tech Solutions BR</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal" style="transition-delay:0.1s;">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">Antes usávamos planilhas e sempre perdíamos algum prazo. Agora temos visibilidade total. Interface super limpa e fácil de usar.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);">KF</div>
+          <div><div class="author-name">Karla Ferreira</div><div class="author-role">Gestora Jurídica · Nexus Consultoria</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal" style="transition-delay:0.2s;">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">Implantamos em 2 dias e já no primeiro mês tivemos retorno. A equipe não precisa de treinamento. É realmente intuitivo.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background:linear-gradient(135deg,#0891b2,#22d3ee);">LP</div>
+          <div><div class="author-name">Lucas Pimentel</div><div class="author-role">Diretor · Pimentel &amp; Assoc.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="planos">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Planos</div>
+      <h2 class="display-md">Escolha o plano<br>ideal para sua empresa</h2>
+      <p>Sem taxa de adesão. Cancele quando quiser. Suporte incluído em todos os planos.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card reveal">
+        <div class="pricing-name">Básico</div>
+        <div class="pricing-price"><span class="currency">R$</span><span class="amount">97</span><span class="period">/mês</span></div>
+        <p class="pricing-desc">Ideal para pequenas empresas e autônomos que estão começando com gestão contratual.</p>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="check">✓</span> Até 30 contratos</div>
+          <div class="pricing-feature"><span class="check">✓</span> Alertas por email</div>
+          <div class="pricing-feature"><span class="check">✓</span> Dashboard completo</div>
+          <div class="pricing-feature"><span class="check">✓</span> Suporte por chat</div>
+          <div class="pricing-feature" style="opacity:0.4;"><span class="check" style="background:var(--gray-mid);color:var(--gray-text);">—</span> Relatórios avançados</div>
+          <div class="pricing-feature" style="opacity:0.4;"><span class="check" style="background:var(--gray-mid);color:var(--gray-text);">—</span> Múltiplos usuários</div>
+        </div>
+        <a href="login.html" class="btn btn-outline btn-block">Assinar plano</a>
+      </div>
+      <div class="pricing-card popular reveal" style="transition-delay:0.1s;">
+        <div class="popular-badge">⭐ Mais popular</div>
+        <div class="pricing-name" style="color:var(--blue);">Pro</div>
+        <div class="pricing-price"><span class="currency">R$</span><span class="amount">197</span><span class="period">/mês</span></div>
+        <p class="pricing-desc">Para empresas em crescimento que precisam de controle total e múltiplos usuários.</p>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="check check-blue">✓</span> Contratos ilimitados</div>
+          <div class="pricing-feature"><span class="check check-blue">✓</span> Alertas email + WhatsApp</div>
+          <div class="pricing-feature"><span class="check check-blue">✓</span> Dashboard completo</div>
+          <div class="pricing-feature"><span class="check check-blue">✓</span> Suporte prioritário</div>
+          <div class="pricing-feature"><span class="check check-blue">✓</span> Relatórios avançados</div>
+          <div class="pricing-feature"><span class="check check-blue">✓</span> Até 5 usuários</div>
+        </div>
+        <a href="login.html" class="btn btn-primary btn-block">Assinar plano</a>
+      </div>
+      <div class="pricing-card reveal" style="transition-delay:0.2s;">
+        <div class="pricing-name">Premium</div>
+        <div class="pricing-price"><span class="currency">R$</span><span class="amount">397</span><span class="period">/mês</span></div>
+        <p class="pricing-desc">Para grandes empresas e escritórios jurídicos com alto volume de contratos.</p>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="check">✓</span> Contratos ilimitados</div>
+          <div class="pricing-feature"><span class="check">✓</span> Todos os canais de alerta</div>
+          <div class="pricing-feature"><span class="check">✓</span> Dashboard + Analytics</div>
+          <div class="pricing-feature"><span class="check">✓</span> Suporte 24/7 dedicado</div>
+          <div class="pricing-feature"><span class="check">✓</span> Relatórios + exportação</div>
+          <div class="pricing-feature"><span class="check">✓</span> Usuários ilimitados</div>
+        </div>
+        <a href="login.html" class="btn btn-outline btn-block">Assinar plano</a>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:32px;font-size:0.85rem;color:var(--gray-text);">🔒 Pagamento seguro · Cancele a qualquer momento · Sem taxas escondidas</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-sm">
+  <div class="cta-section reveal">
+    <div style="position:relative;z-index:1;">
+      <h2 class="display-md">Pronto para ter controle<br>total dos seus contratos?</h2>
+      <p>Comece agora grátis. Sem cartão de crédito. Cancele quando quiser.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+        <a href="login.html" class="btn btn-white btn-xl">🚀 Começar gratuitamente</a>
+        <a href="demo.html" class="btn btn-xl" style="background:rgba(255,255,255,0.15);color:white;border:1.5px solid rgba(255,255,255,0.3);">👁 Ver demonstração</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section contact-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Contato</div>
+      <h2 class="display-md">Fale com a gente</h2>
+      <p>Estamos aqui para ajudar. Entre em contato pelo canal de sua preferência.</p>
+    </div>
+    <div class="contact-links reveal">
+      <a href="https://wa.me/5548996656319" target="_blank" class="contact-link">
+        <span class="contact-link-icon">📱</span>
+        <div><div style="font-weight:600;font-size:0.85rem;">WhatsApp</div><div style="font-size:0.75rem;color:var(--gray-text);">+55 (48) 99656-6319</div></div>
+      </a>
+      <a href="https://instagram.com/jp.dev081019" target="_blank" class="contact-link">
+        <span class="contact-link-icon">📸</span>
+        <div><div style="font-weight:600;font-size:0.85rem;">Instagram</div><div style="font-size:0.75rem;color:var(--gray-text);">@jp.dev081019</div></div>
+      </a>
+      <a href="mailto:joao081019pedrodasilv@gmail.com" class="contact-link">
+        <span class="contact-link-icon">📧</span>
+        <div><div style="font-weight:600;font-size:0.85rem;">Email</div><div style="font-size:0.75rem;color:var(--gray-text);">joao081019pedrodasilv@gmail.com</div></div>
+      </a>
+      <a href="https://jpdevdigitalweb.netlify.app/" target="_blank" class="contact-link">
+        <span class="contact-link-icon">🌐</span>
+        <div><div style="font-weight:600;font-size:0.85rem;">Site oficial</div><div style="font-size:0.75rem;color:var(--gray-text);">jpdevdigitalweb.netlify.app</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 JP Dev Soluções Digitais. Todos os direitos reservados.</p>
+  <p>Desenvolvido por João Pedro da Silva</p>
+</footer>
+
+<script src="js/script.js"></script>
+<script>
+  document.getElementById('hamburger').addEventListener('click', function() {
+    document.getElementById('navLinks').classList.toggle('mobile-open');
+  });
+</script>
+</body>
+</html>
