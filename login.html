@@ -160,66 +160,34 @@
 <script src="js/script.js"></script>
 
 <script>
-  // 🔗 Conexão com Supabase
-  const supabase = window.supabase.createClient(
-    'https://gvnfvmzlcqwoxzzhgebs.supabase.co',
-    'sb_publishable_PT5_hWeX7d3kQ8vYM7-44A_gYwHGph-'
-  );
-
-  // Toggle password
-  document.getElementById('togglePass').addEventListener('click', function() {
-    var p = document.getElementById('password');
-    if (p.type === 'password') { p.type = 'text'; this.textContent = '🙈'; }
-    else { p.type = 'password'; this.textContent = '👁'; }
+   // Toggle password visibility
+   document.getElementById('togglePass').addEventListener('click', function() {
+    const pwInput = document.getElementById('password');
+    if (pwInput.type === 'password') {
+      pwInput.type = 'text';
+      this.textContent = '🙈';
+    } else {
+      pwInput.type = 'password';
+      this.textContent = '👁';
+    }
   });
 
-  // Auto-fill demo
-  document.getElementById('demoFill').addEventListener('click', function() {
-    document.getElementById('email').value = 'joao081019pedrodasilv@gmail.com';
-    document.getElementById('password').value = 'demo123';
-  });
-
-  // Mostrar erro
-  function showLoginError(msg) {
-    var box = document.getElementById('loginError');
-    var msgEl = document.getElementById('loginErrorMsg');
-    if (msgEl) msgEl.textContent = msg;
-    box.style.display = 'flex';
-  }
-
-  // 🚀 LOGIN REAL
   document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    var email    = document.getElementById('email').value.trim();
-    var password = document.getElementById('password').value.trim();
-    var btnText  = document.getElementById('loginBtnText');
-    var btn      = document.getElementById('loginBtn');
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
 
-    document.getElementById('loginError').style.display = 'none';
-
-    if (!email || !password) {
-      showLoginError('Por favor, preencha o email e a senha.');
-      return;
-    }
-
-    btn.disabled = true;
-    btnText.textContent = 'Entrando...';
-
-    // 🔐 Login com Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password
     });
 
     if (error) {
-      showLoginError('Email ou senha inválidos.');
-      btn.disabled = false;
-      btnText.textContent = 'Entrar no sistema →';
+      alert('Email ou senha inválidos');
       return;
     }
 
-    // ✅ Login sucesso
     window.location.href = 'dashboard.html';
   });
 </script>
