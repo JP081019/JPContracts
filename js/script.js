@@ -11,12 +11,14 @@ const supabase = window.supabase.createClient(
 
 // ---- NAVBAR SCROLL ----
 function initNavbar() {
-  var navbar = document.getElementById('navbar');
-  if (!navbar) return;
-  window.addEventListener('scroll', function() {
-    if (window.scrollY > 20) navbar.classList.add('scrolled');
-    else navbar.classList.remove('scrolled');
-  });
+  if (!window.supabaseClient) {
+  window.supabaseClient = window.supabase.createClient(
+    'https://gvnfvmzlcqwoxzzhgebs.supabase.co',
+    'sb_publishable_PT5_hWeX7d3kQ8vYM7-44A_gYwHGph-'
+  );
+}
+
+const supabase = window.supabaseClient;
 }
 
 // ---- MOBILE MENU ----
