@@ -160,8 +160,10 @@
 <script src="js/script.js"></script>
 
 <script>
-   // Toggle password visibility
-   document.getElementById('togglePass').addEventListener('click', function() {
+  const supabase = window.supabaseClient;
+
+  // Toggle password
+  document.getElementById('togglePass').addEventListener('click', function() {
     const pwInput = document.getElementById('password');
     if (pwInput.type === 'password') {
       pwInput.type = 'text';
