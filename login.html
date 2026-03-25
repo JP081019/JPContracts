@@ -156,22 +156,30 @@
   <p>Desenvolvido por João Pedro da Silva</p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/script.js"></script>
+
 <script>
-  // Toggle password visibility
+  // 🔗 Conexão com Supabase
+  const supabase = window.supabase.createClient(
+    'https://gvnfvmzlcqwoxzzhgebs.supabase.co',
+    'sb_publishable_PT5_hWeX7d3kQ8vYM7-44A_gYwHGph-'
+  );
+
+  // Toggle password
   document.getElementById('togglePass').addEventListener('click', function() {
     var p = document.getElementById('password');
     if (p.type === 'password') { p.type = 'text'; this.textContent = '🙈'; }
     else { p.type = 'password'; this.textContent = '👁'; }
   });
 
-  // Auto-fill demo credentials
+  // Auto-fill demo
   document.getElementById('demoFill').addEventListener('click', function() {
     document.getElementById('email').value = 'joao081019pedrodasilv@gmail.com';
     document.getElementById('password').value = 'demo123';
   });
 
-  // Show error helper
+  // Mostrar erro
   function showLoginError(msg) {
     var box = document.getElementById('loginError');
     var msgEl = document.getElementById('loginErrorMsg');
@@ -179,9 +187,10 @@
     box.style.display = 'flex';
   }
 
-  // Login form submit
-  document.getElementById('loginForm').addEventListener('submit', function(e) {
+  // 🚀 LOGIN REAL
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
+
     var email    = document.getElementById('email').value.trim();
     var password = document.getElementById('password').value.trim();
     var btnText  = document.getElementById('loginBtnText');
@@ -194,28 +203,24 @@
       return;
     }
 
-    var validCredentials = [
-      { email: 'joao081019pedrodasilv@gmail.com', password: 'demo123' },
-      { email: 'admin@jpcontracts.com.br',          password: 'admin123' },
-      { email: 'usuario@teste.com',               password: '123456'  }
-    ];
+    btn.disabled = true;
+    btnText.textContent = 'Entrando...';
 
-    var isValid = validCredentials.some(function(c) {
-      return c.email === email && c.password === password;
+    // 🔐 Login com Supabase
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
     });
 
-    if (!isValid) {
-      showLoginError('Email ou senha incorretos. Use as credenciais de demo.');
+    if (error) {
+      showLoginError('Email ou senha inválidos.');
+      btn.disabled = false;
+      btnText.textContent = 'Entrar no sistema →';
       return;
     }
 
-    btn.disabled = true;
-    btnText.textContent = 'Entrando...';
-    sessionStorage.setItem('jpdev_user', JSON.stringify({ email: email, name: 'João Pedro', role: 'Admin' }));
-
-    setTimeout(function() {
-      window.location.href = 'dashboard.html';
-    }, 1200);
+    // ✅ Login sucesso
+    window.location.href = 'dashboard.html';
   });
 </script>
 </body>
