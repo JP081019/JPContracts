@@ -16,7 +16,6 @@
     }
     .login-left-inner { max-width:380px; }
     .login-brand { display:flex; align-items:center; gap:12px; text-decoration:none; margin-bottom:40px; }
-    .login-brand img { width:46px; height:46px; object-fit:contain; filter:brightness(0) invert(1); }
     .login-brand-name { font-family:var(--font-display); font-weight:700; font-size:1.15rem; color:white; }
     .login-brand-name span { color:rgba(255,255,255,0.6); }
     .login-features { display:flex; flex-direction:column; gap:10px; margin-bottom:32px; }
@@ -28,9 +27,7 @@
     .login-card { background:white; border-radius:20px; padding:32px; box-shadow:var(--shadow-md); border:1.5px solid var(--gray-mid); }
     .pw-wrap { position:relative; }
     .pw-toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:1rem; padding:4px; }
-    .demo-box { margin-top:20px; padding:14px 16px; background:var(--blue-xlight); border-radius:10px; border-left:3px solid var(--blue); }
-    .demo-box p { font-size:.82rem; color:var(--blue-dark); margin-bottom:4px; }
-    #loginError { display:none; }
+    #loginError { display:none; margin-bottom:16px; }
     .login-footer-bar { background:var(--gray-light); padding:22px 24px; border-top:1px solid var(--gray-mid); display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
     @media(max-width:768px){ .login-grid{grid-template-columns:1fr;} .login-left{display:none;} }
   </style>
@@ -39,14 +36,18 @@
 
 <div class="login-grid">
 
-  <!-- LEFT PANEL -->
+  <!-- PAINEL ESQUERDO: apresentação do produto -->
   <div class="login-left">
     <div class="login-left-inner">
       <a href="index.html" class="login-brand">
         <div class="login-brand-name">JP Contracts <span>· JP Dev</span></div>
       </a>
-      <h2 style="color:white;font-size:1.9rem;font-weight:800;margin-bottom:12px;line-height:1.25;">Bem-vindo de volta<br>ao JP Contracts</h2>
-      <p style="color:rgba(255,255,255,.65);font-size:.95rem;line-height:1.65;margin-bottom:32px;">Gerencie todos os seus contratos com segurança, praticidade e alertas automáticos.</p>
+      <h2 style="color:white;font-size:1.9rem;font-weight:800;margin-bottom:12px;line-height:1.25;">
+        Bem-vindo de volta<br>ao JP Contracts
+      </h2>
+      <p style="color:rgba(255,255,255,.65);font-size:.95rem;line-height:1.65;margin-bottom:32px;">
+        Gerencie todos os seus contratos com segurança, praticidade e alertas automáticos.
+      </p>
       <div class="login-features">
         <div class="login-feature"><span class="chk">✓</span> Dashboard completo com alertas em tempo real</div>
         <div class="login-feature"><span class="chk">✓</span> Cadastro de contratos em menos de 1 minuto</div>
@@ -54,10 +55,14 @@
         <div class="login-feature"><span class="chk">✓</span> Acesso de qualquer dispositivo</div>
       </div>
       <div class="login-testimonial">
-        <div style="color:rgba(255,255,255,.45);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Depoimento de cliente</div>
-        <p style="color:rgba(255,255,255,.85);font-size:.88rem;line-height:1.65;font-style:italic;margin-bottom:14px;">"O JP Contracts transformou a gestão de contratos da nossa empresa. Simples, rápido e confiável."</p>
+        <div style="color:rgba(255,255,255,.45);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">
+          Depoimento de cliente
+        </div>
+        <p style="color:rgba(255,255,255,.85);font-size:.88rem;line-height:1.65;font-style:italic;margin-bottom:14px;">
+          "O JP Contracts transformou a gestão de contratos da nossa empresa. Simples, rápido e confiável."
+        </p>
         <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.75rem;flex-shrink:0;">MR</div>
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.75rem;">MR</div>
           <div>
             <div style="color:white;font-size:.82rem;font-weight:600;">Marcos Rocha</div>
             <div style="color:rgba(255,255,255,.45);font-size:.72rem;">CEO · Tech Solutions BR</div>
@@ -67,16 +72,17 @@
     </div>
   </div>
 
-  <!-- RIGHT PANEL -->
+  <!-- PAINEL DIREITO: formulário de login -->
   <div class="login-right">
     <div class="login-form-wrap">
+
       <div style="text-align:center;margin-bottom:28px;">
         <h1 style="font-size:1.7rem;font-weight:800;margin-bottom:8px;color:var(--black);">Entrar na sua conta</h1>
-        <p style="color:var(--gray-text);font-size:.9rem;">Use as credenciais de demo para explorar o sistema</p>
+        <p style="color:var(--gray-text);font-size:.9rem;">Use seu email e senha cadastrados no Supabase</p>
       </div>
 
-      <!-- Error alert -->
-      <div id="loginError" class="alert alert-danger" style="margin-bottom:16px;">
+      <!-- Mensagem de erro (escondida por padrão) -->
+      <div id="loginError" class="alert alert-danger">
         <span>⚠️</span>
         <span id="loginErrorMsg">Erro ao fazer login</span>
       </div>
@@ -86,68 +92,69 @@
 
           <div class="form-group">
             <label class="form-label" for="email">📧 Email</label>
-            <input class="form-input" type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email">
+            <input class="form-input" type="email" id="email" name="email"
+              placeholder="seu@email.com" autocomplete="email" required>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="password">🔒 Senha</label>
             <div class="pw-wrap">
-              <input class="form-input" type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:42px;">
+              <input class="form-input" type="password" id="password" name="password"
+                placeholder="••••••••" autocomplete="current-password"
+                style="padding-right:42px;" required>
               <button type="button" class="pw-toggle" id="togglePass">👁</button>
             </div>
           </div>
 
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-            <label style="display:flex;align-items:center;gap:7px;font-size:.83rem;cursor:pointer;color:var(--black-soft);">
-              <input type="checkbox" style="width:15px;height:15px;accent-color:var(--blue);">
-              Lembrar de mim
-            </label>
-            <a href="#" style="font-size:.83rem;color:var(--blue);font-weight:500;text-decoration:none;">Esqueci a senha</a>
+          <div style="margin-bottom:20px;text-align:right;">
+            <a href="#" style="font-size:.83rem;color:var(--blue);font-weight:500;text-decoration:none;">
+              Esqueci a senha
+            </a>
           </div>
 
+          <!-- Botão de submit -->
           <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginBtn">
             <span id="loginBtnText">Entrar no sistema →</span>
           </button>
-        </form>
 
-        <!-- Demo credentials -->
-        <div class="demo-box">
-          <p style="font-weight:700;color:var(--blue-dark);margin-bottom:8px;">🎯 Credenciais de demonstração:</p>
-          <p>Email: <strong>joao081019pedrodasilv@gmail.com</strong></p>
-          <p style="margin-bottom:0;">Senha: <strong>demo123</strong></p>
-          <button id="demoFill" class="btn btn-sm" style="margin-top:10px;background:rgba(37,99,235,.12);color:var(--blue);border:none;width:100%;font-weight:600;">
-            ⚡ Preencher automaticamente
-          </button>
-        </div>
+        </form>
       </div>
 
       <p style="text-align:center;margin-top:20px;font-size:.83rem;color:var(--gray-text);">
-        Não tem uma conta? <a href="index.html#planos" style="color:var(--blue);font-weight:500;text-decoration:none;">Escolha um plano →</a>
+        Não tem uma conta?
+        <a href="index.html#planos" style="color:var(--blue);font-weight:500;text-decoration:none;">Escolha um plano →</a>
       </p>
       <div style="text-align:center;margin-top:16px;">
         <a href="index.html" style="font-size:.82rem;color:var(--gray-text);text-decoration:none;">← Voltar ao site</a>
       </div>
+
     </div>
   </div>
+
 </div>
 
-<!-- CONTACT FOOTER -->
+<!-- RODAPÉ COM CONTATOS -->
 <div class="login-footer-bar">
   <a href="https://wa.me/5548996656319" target="_blank" class="contact-link">
     <span>📱</span>
-    <div><div style="font-weight:600;font-size:.83rem;">WhatsApp</div><div style="font-size:.72rem;color:var(--gray-text);">+55 (48) 99656-6319</div></div>
+    <div>
+      <div style="font-weight:600;font-size:.83rem;">WhatsApp</div>
+      <div style="font-size:.72rem;color:var(--gray-text);">+55 (48) 99656-6319</div>
+    </div>
   </a>
   <a href="https://instagram.com/jp.dev081019" target="_blank" class="contact-link">
     <span>📸</span>
-    <div><div style="font-weight:600;font-size:.83rem;">Instagram</div><div style="font-size:.72rem;color:var(--gray-text);">@jp.dev081019</div></div>
+    <div>
+      <div style="font-weight:600;font-size:.83rem;">Instagram</div>
+      <div style="font-size:.72rem;color:var(--gray-text);">@jp.dev081019</div>
+    </div>
   </a>
   <a href="mailto:joao081019pedrodasilv@gmail.com" class="contact-link">
     <span>📧</span>
-    <div><div style="font-weight:600;font-size:.83rem;">Email</div><div style="font-size:.72rem;color:var(--gray-text);">joao081019pedrodasilv@gmail.com</div></div>
-  </a>
-  <a href="https://jpdevdigitalweb.netlify.app/" target="_blank" class="contact-link">
-    <span>🌐</span>
-    <div><div style="font-weight:600;font-size:.83rem;">Site oficial</div><div style="font-size:.72rem;color:var(--gray-text);">jpdevdigitalweb.netlify.app</div></div>
+    <div>
+      <div style="font-weight:600;font-size:.83rem;">Email</div>
+      <div style="font-size:.72rem;color:var(--gray-text);">joao081019pedrodasilv@gmail.com</div>
+    </div>
   </a>
 </div>
 
@@ -156,42 +163,70 @@
   <p>Desenvolvido por João Pedro da Silva</p>
 </footer>
 
+<!--
+  ORDEM CORRETA DOS SCRIPTS:
+  1. Biblioteca do Supabase (vem do CDN)
+  2. script.js (que usa a biblioteca e cria window.supabaseClient)
+  3. Lógica específica do login (inline, aqui embaixo)
+-->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/script.js"></script>
 
 <script>
-  const supabase = window.supabaseClient;
-
-  // Toggle password
-  document.getElementById('togglePass').addEventListener('click', function() {
-    const pwInput = document.getElementById('password');
-    if (pwInput.type === 'password') {
-      pwInput.type = 'text';
+  // ---- MOSTRAR/ESCONDER SENHA ----
+  document.getElementById('togglePass').addEventListener('click', function () {
+    var input = document.getElementById('password');
+    if (input.type === 'password') {
+      input.type = 'text';
       this.textContent = '🙈';
     } else {
-      pwInput.type = 'password';
+      input.type = 'password';
       this.textContent = '👁';
     }
   });
 
-  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  // ---- MOSTRAR ERRO ----
+  function showLoginError(msg) {
+    var box = document.getElementById('loginError');
+    var msgEl = document.getElementById('loginErrorMsg');
+    if (msgEl) msgEl.textContent = msg;
+    box.style.display = 'flex';
+  }
+
+  // ---- SUBMIT DO LOGIN ----
+  document.getElementById('loginForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
+    // Esconde erros anteriores
+    document.getElementById('loginError').style.display = 'none';
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
+    var email    = document.getElementById('email').value.trim();
+    var password = document.getElementById('password').value.trim();
+    var btn      = document.getElementById('loginBtn');
+    var btnText  = document.getElementById('loginBtnText');
+
+    // Desabilita o botão enquanto processa
+    btn.disabled = true;
+    btnText.textContent = 'Entrando...';
+
+    // Tenta logar com Supabase
+    var result = await window.supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
     });
 
-    if (error) {
-      alert('Email ou senha inválidos');
+    if (result.error) {
+      // Erro de autenticação
+      btn.disabled = false;
+      btnText.textContent = 'Entrar no sistema →';
+      showLoginError('Email ou senha incorretos. Verifique suas credenciais.');
       return;
     }
 
+    // Login OK — redireciona para o dashboard
     window.location.href = 'dashboard.html';
   });
 </script>
+
 </body>
 </html>
