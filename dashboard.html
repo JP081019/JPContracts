@@ -286,7 +286,9 @@
   <div style="font-size:.75rem;color:var(--gray-text);">© 2026 JP Dev Soluções Digitais · Desenvolvido por João Pedro da Silva</div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/script.js"></script>
+
 <script>
   // Mobile sidebar
   var mobileBtn   = document.getElementById('mobileSidebarBtn');
@@ -306,9 +308,10 @@
   }
 
   // Topbar logout
-  document.getElementById('topbarLogout') && document.getElementById('topbarLogout').addEventListener('click', function() {
-    sessionStorage.removeItem('jpdev_user'); window.location.href = 'login.html';
-  });
+ document.getElementById('topbarLogout') && document.getElementById('topbarLogout').addEventListener('click', async function() {
+  await supabase.auth.signOut();
+  window.location.href = 'login.html';
+});
 
   // Add contract buttons
   ['addContractBtn','addContractBtn2','addContractBtnPage'].forEach(function(id) {
