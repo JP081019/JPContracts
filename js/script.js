@@ -719,24 +719,40 @@ function initAddContractModal() {
   if (!overlay || !form) return;
 
   form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var fd = new FormData(form);
+  e.preventDefault();
+  var fd = new FormData(form);
 
-    ContractStore.add({
-      name:        fd.get('name'),
-      company:     fd.get('company'),
-      value:       parseFloat(fd.get('value')) || 0,
-      startDate:   fd.get('startDate'),
-      endDate:     fd.get('endDate'),
-      description: fd.get('description') || '',
-      category:    fd.get('category')    || 'outros'
-    });
+  var contract = {
+    name:        fd.get('name'),
+    company:     fd.get('company'),
+    value:       parseFloat(fd.get('value')) || 0,
+    startDate:   fd.get('startDate'),
+    endDate:     fd.get('endDate'),
+    description: fd.get('description') || '',
+    category:    fd.get('category')    || 'outros'
+  };
 
-    overlay.classList.remove('open');
-    form.reset();
-    renderDashboard();
-    showToast('✅ Contrato adicionado com sucesso!');
+  // salva no localStorage (continua funcionando)
+  ContractStore.add(contract);
+
+  // 🔥 salva no banco (novo)
+  fetch('/.netlify/functions/addContract', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(contract)
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log('Salvo no banco:', data);
   });
+
+  overlay.classList.remove('open');
+  form.reset();
+  renderDashboard();
+  showToast('✅ Contrato adicionado com sucesso!');
+});
 }
 
 // ---- Modal: Visualizar Contrato ----
