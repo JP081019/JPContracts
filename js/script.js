@@ -226,9 +226,13 @@ async function initDashboard() {
 
 async function renderDashboard() {
   var contracts = await ContractStore.getAll()
+  
+  // Garante que é sempre um array
+  if (!Array.isArray(contracts)) contracts = []
+  
   updateStats(contracts)
-  await renderContractsList()
   renderAlerts(contracts)
+  await renderContractsList()
 }
 
 async function renderContractsList(search) {
@@ -298,6 +302,24 @@ function renderAlerts(contracts) {
       (isExp ? 'Vencido há ' + Math.abs(s.days) + ' dias' : 'Vence em ' + s.days + ' dias') +
       '</span></div>'
   }).join('')
+}
+
+function updateStats(contracts) {
+  var total    = contracts.length
+  var active   = contracts.filter(function (c) { return getContractStatus(c.end_date).label === 'Ativo' }).length
+  var expiring = contracts.filter(function (c) { return getContractStatus(c.end_date).label === 'Vencendo' }).length
+  var expired  = contracts.filter(function (c) { return getContractStatus(c.end_date).label === 'Vencido' }).length
+  var totalVal = contracts.reduce(function (s, c) { return s + (parseFloat(c.value) || 0) }, 0)
+
+  function set(id, val) {
+    var el = document.getElementById(id)
+    if (el) el.textContent = val
+  }
+  set('stat-total',    total)
+  set('stat-active',   active)
+  set('stat-expiring', expiring)
+  set('stat-expired',  expired)
+  set('stat-value',    formatCurrency(totalVal))
 }
 
 // ============================================================
