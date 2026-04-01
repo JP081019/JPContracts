@@ -190,17 +190,102 @@ async function authGuard() {
 }
 
 // ============================================================
+// 5.1 BUSCAR DADOS DA EMPRESA
+// ============================================================
+async function getCompanyData() {
+  // Busca o usuário logado
+  var authUser = await window.supabaseClient.auth.getUser()
+  if (!authUser.data.user) return null
+
+  // Busca dados do usuário + empresa em uma query só
+  var result = await window.supabaseClient
+    .from('users')
+    .select(`
+      id,
+      name,
+      email,
+      role,
+      company_id,
+      companies (
+        id,
+        name,
+        plan,
+        trial_ends_at
+      )
+    `)
+    .eq('id', authUser.data.user.id)
+    .single()
+
+  if (result.error) {
+    console.error('Erro ao buscar dados da empresa:', result.error.message)
+    return null
+  }
+
+  return result.data
+}
+
+// ============================================================
+// 5.2 VERIFICAR LIMITE DO PLANO
+// ============================================================
+async function checkPlanLimit() {
+  var userData = await getCompanyData()
+  if (!userData) return { allowed: false, reason: 'Usuário não encontrado' }
+
+  var plan      = userData.companies.plan
+  var trialEnds = userData.companies.trial_ends_at
+
+  // Verifica se o trial expirou
+  if (plan === 'trial') {
+    var now      = new Date()
+    var trialEnd = new Date(trialEnds)
+    if (now > trialEnd) {
+      return {
+        allowed: false,
+        reason:  'Seu período de trial expirou. Escolha um plano para continuar.'
+      }
+    }
+    return { allowed: true, plan: 'trial' }
+  }
+
+  // Verifica limite de contratos do plano básico
+  if (plan === 'basico') {
+    var contracts = await ContractStore.getAll()
+    if (contracts.length >= 30) {
+      return {
+        allowed: false,
+        reason:  'Você atingiu o limite de 30 contratos do plano Básico. Faça upgrade para o plano Pro.'
+      }
+    }
+  }
+
+  return { allowed: true, plan: plan }
+}
+
+// ============================================================
 // 6. DASHBOARD
 // ============================================================
 async function initDashboard() {
   var user = await authGuard()
   if (!user) return
 
-  var userName = document.querySelector('.user-name')
-  if (userName) {
-    userName.textContent = (user.user_metadata && user.user_metadata.name)
-      ? user.user_metadata.name
-      : user.email
+  // Busca dados reais do banco
+  var userData = await getCompanyData()
+
+  if (userData) {
+    // Nome do usuário
+    var userName = document.querySelector('.user-name')
+    if (userName) {
+      userName.textContent = userData.name || user.email
+    }
+
+    // Email do usuário
+    var userEmail = document.querySelector('.user-email')
+    if (userEmail) {
+      userEmail.textContent = userData.email
+    }
+
+    // Mostra informações do plano no dashboard
+    renderPlanInfo(userData)
   }
 
   await renderDashboard()
@@ -322,6 +407,71 @@ function updateStats(contracts) {
   set('stat-value',    formatCurrency(totalVal))
 }
 
+function renderPlanInfo(userData) {
+  var company = userData.companies
+  if (!company) return
+
+  // Calcula dias restantes do trial
+  var trialDaysLeft = 0
+  if (company.plan === 'trial') {
+    var now      = new Date()
+    var trialEnd = new Date(company.trial_ends_at)
+    trialDaysLeft = Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24))
+  }
+
+  // Monta o badge do plano
+  var planLabels = {
+    trial:   '🎁 Trial',
+    basico:  '📦 Básico',
+    pro:     '⭐ Pro',
+    premium: '💎 Premium'
+  }
+
+  var planLabel = planLabels[company.plan] || company.plan
+
+  // Exibe na topbar
+  var topbar = document.querySelector('.topbar-right')
+  if (topbar) {
+    var existing = document.getElementById('planBadge')
+    if (existing) existing.remove()
+
+    var badge = document.createElement('div')
+    badge.id  = 'planBadge'
+    badge.style.cssText = 'display:flex;align-items:center;gap:8px;'
+
+    if (company.plan === 'trial' && trialDaysLeft > 0) {
+      badge.innerHTML =
+        '<span style="background:#fef3c7;color:#92400e;padding:5px 12px;border-radius:8px;font-size:.78rem;font-weight:600;">' +
+          planLabel + ' · ' + trialDaysLeft + ' dias restantes' +
+        '</span>' +
+        '<a href="index.html#planos" style="background:var(--blue);color:white;padding:5px 12px;border-radius:8px;font-size:.78rem;font-weight:600;text-decoration:none;">Assinar plano</a>'
+    } else if (company.plan === 'trial' && trialDaysLeft <= 0) {
+      badge.innerHTML =
+        '<span style="background:#fee2e2;color:#991b1b;padding:5px 12px;border-radius:8px;font-size:.78rem;font-weight:600;">Trial expirado</span>' +
+        '<a href="index.html#planos" style="background:var(--blue);color:white;padding:5px 12px;border-radius:8px;font-size:.78rem;font-weight:600;text-decoration:none;">Assinar agora</a>'
+    } else {
+      badge.innerHTML =
+        '<span style="background:var(--blue-xlight);color:var(--blue);padding:5px 12px;border-radius:8px;font-size:.78rem;font-weight:600;">' +
+          planLabel +
+        '</span>'
+    }
+
+    topbar.insertBefore(badge, topbar.firstChild)
+  }
+
+  // Alerta de trial expirando
+  var alertsContainer = document.getElementById('alertsContainer')
+  if (alertsContainer && company.plan === 'trial') {
+    if (trialDaysLeft <= 0) {
+      var expiredAlert = '<div class="alert alert-danger" style="margin-bottom:12px;">🔴 <strong>Seu trial expirou!</strong> Assine um plano para continuar adicionando contratos. <a href="index.html#planos" style="color:var(--danger);font-weight:700;">Ver planos →</a></div>'
+      alertsContainer.innerHTML = expiredAlert + alertsContainer.innerHTML
+    } else if (trialDaysLeft <= 3) {
+      var expiringAlert = '<div class="alert alert-warning" style="margin-bottom:12px;">⚠️ Seu trial expira em <strong>' + trialDaysLeft + ' dias</strong>. <a href="index.html#planos" style="color:#92400e;font-weight:700;">Assinar agora →</a></div>'
+      alertsContainer.innerHTML = expiringAlert + alertsContainer.innerHTML
+    }
+  }
+}
+
 // ============================================================
 // 7. MODAIS
 // ============================================================
@@ -332,6 +482,15 @@ function initAddContractModal() {
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault()
+
+    // Verifica limite do plano antes de salvar
+    var planCheck = await checkPlanLimit()
+    if (!planCheck.allowed) {
+      showToast('❌ ' + planCheck.reason)
+      overlay.classList.remove('open')
+      return
+    }
+
     var fd = new FormData(form)
 
     var result = await ContractStore.add({
