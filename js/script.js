@@ -104,50 +104,76 @@ function formatCurrency(value) {
 }
 
 // ============================================================
-// 4. CONTRACT STORE (localStorage — temporário)
+// 4. CONTRACT STORE — Supabase
 // ============================================================
 var ContractStore = {
-  KEY: 'jpdev_contracts',
 
-  getAll: function () {
-    var data = localStorage.getItem(this.KEY)
-    return data ? JSON.parse(data) : this.getDefaults()
-  },
+  // Busca todos os contratos da empresa do usuário logado
+  getAll: async function () {
+    var result = await window.supabaseClient
+      .from('contracts')
+      .select('*')
+      .order('created_at', { ascending: false })
 
-  save: function (contracts) {
-    localStorage.setItem(this.KEY, JSON.stringify(contracts))
-  },
-
-  add: function (contract) {
-    var contracts      = this.getAll()
-    contract.id        = Date.now()
-    contract.createdAt = new Date().toISOString()
-    contracts.unshift(contract)
-    this.save(contracts)
-    return contract
-  },
-
-  remove: function (id) {
-    var contracts = this.getAll().filter(function (c) { return c.id !== id })
-    this.save(contracts)
-  },
-
-  getDefaults: function () {
-    var today = new Date()
-    function addDays(d, n) {
-      var r = new Date(d)
-      r.setDate(r.getDate() + n)
-      return r.toISOString().split('T')[0]
+    if (result.error) {
+      console.error('Erro ao buscar contratos:', result.error.message)
+      return []
     }
-    var defaults = [
-      { id: 1, name: 'Contrato de Serviços TI',  company: 'TechCorp Ltda.',      value: 8500,  startDate: addDays(today, -120), endDate: addDays(today, 45),  description: 'Suporte e manutenção de sistemas',      category: 'servicos',        createdAt: addDays(today, -120) },
-      { id: 2, name: 'Licença de Software ERP',   company: 'Grupo Sigma S.A.',    value: 24000, startDate: addDays(today, -200), endDate: addDays(today, 165), description: 'Licença anual sistema ERP',              category: 'licenca',         createdAt: addDays(today, -200) },
-      { id: 3, name: 'Consultoria Estratégica',   company: 'Inovare Consultores', value: 5200,  startDate: addDays(today, -30),  endDate: addDays(today, 7),   description: 'Projeto de transformação digital',       category: 'consultoria',     createdAt: addDays(today, -30)  },
-      { id: 4, name: 'Desenvolvimento Web',       company: 'StartUp Nexus',       value: 12800, startDate: addDays(today, -90),  endDate: addDays(today, -5),  description: 'Desenvolvimento plataforma e-commerce',  category: 'desenvolvimento', createdAt: addDays(today, -90)  },
-      { id: 5, name: 'Suporte Infraestrutura',    company: 'Mega Corp Brasil',    value: 3600,  startDate: addDays(today, -60),  endDate: addDays(today, 12),  description: 'Suporte mensal infraestrutura cloud',    category: 'servicos',        createdAt: addDays(today, -60)  }
-    ]
-    this.save(defaults)
-    return defaults
+
+    return result.data
+  },
+
+  // Adiciona um novo contrato
+  add: async function (contract) {
+    // Busca o company_id do usuário logado
+    var userResult = await window.supabaseClient
+      .from('users')
+      .select('company_id')
+      .eq('id', (await window.supabaseClient.auth.getUser()).data.user.id)
+      .single()
+
+    if (userResult.error) {
+      console.error('Erro ao buscar empresa:', userResult.error.message)
+      return null
+    }
+
+    var result = await window.supabaseClient
+      .from('contracts')
+      .insert({
+        company_id:   userResult.data.company_id,
+        name:         contract.name,
+        company_name: contract.company,
+        value:        contract.value,
+        start_date:   contract.startDate,
+        end_date:     contract.endDate,
+        description:  contract.description,
+        category:     contract.category,
+        status:       'active'
+      })
+      .select()
+      .single()
+
+    if (result.error) {
+      console.error('Erro ao salvar contrato:', result.error.message)
+      return null
+    }
+
+    return result.data
+  },
+
+  // Remove um contrato
+  remove: async function (id) {
+    var result = await window.supabaseClient
+      .from('contracts')
+      .delete()
+      .eq('id', id)
+
+    if (result.error) {
+      console.error('Erro ao remover contrato:', result.error.message)
+      return false
+    }
+
+    return true
   }
 }
 
@@ -177,7 +203,7 @@ async function initDashboard() {
       : user.email
   }
 
-  renderDashboard()
+  await renderDashboard()
 
   var logoutBtn = document.getElementById('logoutBtn')
   if (logoutBtn) {
@@ -198,37 +224,19 @@ async function initDashboard() {
   initAddContractModal()
 }
 
-function renderDashboard() {
-  var contracts = ContractStore.getAll()
+async function renderDashboard() {
+  var contracts = await ContractStore.getAll()
   updateStats(contracts)
-  renderContractsList()
+  await renderContractsList()
   renderAlerts(contracts)
 }
 
-function updateStats(contracts) {
-  var total    = contracts.length
-  var active   = contracts.filter(function (c) { return getContractStatus(c.endDate).label === 'Ativo' }).length
-  var expiring = contracts.filter(function (c) { return getContractStatus(c.endDate).label === 'Vencendo' }).length
-  var expired  = contracts.filter(function (c) { return getContractStatus(c.endDate).label === 'Vencido' }).length
-  var totalVal = contracts.reduce(function (s, c) { return s + (parseFloat(c.value) || 0) }, 0)
-
-  function set(id, val) {
-    var el = document.getElementById(id)
-    if (el) el.textContent = val
-  }
-  set('stat-total',    total)
-  set('stat-active',   active)
-  set('stat-expiring', expiring)
-  set('stat-expired',  expired)
-  set('stat-value',    formatCurrency(totalVal))
-}
-
-function renderContractsList(search) {
-  var contracts = ContractStore.getAll()
+async function renderContractsList(search) {
+  var contracts = await ContractStore.getAll()
   var filtered  = search
     ? contracts.filter(function (c) {
         return c.name.toLowerCase().includes(search.toLowerCase()) ||
-               c.company.toLowerCase().includes(search.toLowerCase())
+               c.company_name.toLowerCase().includes(search.toLowerCase())
       })
     : contracts
 
@@ -240,28 +248,28 @@ function renderContractsList(search) {
       '<tr><td colspan="6">' +
         '<div class="empty-state">' +
           '<div class="empty-icon">📋</div>' +
-          '<div class="empty-title">' + (search ? 'Nenhum contrato encontrado' : 'Nenhum contrato cadastrado') + '</div>' +
-          '<div class="empty-desc">' + (search ? 'Tente outros termos' : 'Adicione seu primeiro contrato clicando em "+ Novo contrato"') + '</div>' +
+          '<div class="empty-title">Nenhum contrato cadastrado</div>' +
+          '<div class="empty-desc">Adicione seu primeiro contrato clicando em "+ Novo contrato"</div>' +
         '</div>' +
       '</td></tr>'
     return
   }
 
   tbody.innerHTML = filtered.map(function (c) {
-    var s        = getContractStatus(c.endDate)
+    var s        = getContractStatus(c.end_date)
     var daysText = s.days < 0
       ? 'Vencido há ' + Math.abs(s.days) + ' dias'
       : 'Vence em '   + s.days           + ' dias'
     return '<tr>' +
       '<td><div style="font-weight:600;">' + c.name + '</div></td>' +
-      '<td><div style="color:var(--gray-text);font-size:.82rem;">' + c.company + '</div></td>' +
-      '<td>' + formatDate(c.endDate) + '</td>' +
+      '<td><div style="color:var(--gray-text);font-size:.82rem;">' + c.company_name + '</div></td>' +
+      '<td>' + formatDate(c.end_date) + '</td>' +
       '<td><span class="badge ' + s.class + '"><span class="status-dot ' + s.dot + '"></span>' + s.label + '</span>' +
         '<div style="font-size:.72rem;color:var(--gray-text);margin-top:3px;">' + daysText + '</div></td>' +
       '<td style="font-weight:600;">' + formatCurrency(c.value) + '</td>' +
       '<td><div class="table-actions">' +
-        '<button class="btn btn-sm btn-secondary" onclick="viewContract(' + c.id + ')">👁 Ver</button>' +
-        '<button class="btn btn-sm btn-danger" onclick="deleteContract(' + c.id + ')">🗑</button>' +
+        '<button class="btn btn-sm btn-secondary" onclick="viewContract(\'' + c.id + '\')">👁 Ver</button>' +
+        '<button class="btn btn-sm btn-danger" onclick="deleteContract(\'' + c.id + '\')">🗑</button>' +
       '</div></td>' +
     '</tr>'
   }).join('')
@@ -272,7 +280,7 @@ function renderAlerts(contracts) {
   if (!container) return
 
   var urgent = contracts.filter(function (c) {
-    var s = getContractStatus(c.endDate)
+    var s = getContractStatus(c.end_date)
     return s.label === 'Vencendo' || s.label === 'Vencido'
   }).slice(0, 4)
 
@@ -282,11 +290,11 @@ function renderAlerts(contracts) {
   }
 
   container.innerHTML = urgent.map(function (c) {
-    var s     = getContractStatus(c.endDate)
+    var s     = getContractStatus(c.end_date)
     var isExp = s.label === 'Vencido'
     return '<div class="alert ' + (isExp ? 'alert-danger' : 'alert-warning') + '">' +
       '<span>' + (isExp ? '🔴' : '🟡') + '</span>' +
-      '<span><strong>' + c.name + '</strong> — ' + c.company + ' · ' +
+      '<span><strong>' + c.name + '</strong> — ' + c.company_name + ' · ' +
       (isExp ? 'Vencido há ' + Math.abs(s.days) + ' dias' : 'Vence em ' + s.days + ' dias') +
       '</span></div>'
   }).join('')
@@ -300,10 +308,11 @@ function initAddContractModal() {
   var form    = document.getElementById('addContractForm')
   if (!overlay || !form) return
 
-  form.addEventListener('submit', function (e) {
+  form.addEventListener('submit', async function (e) {
     e.preventDefault()
     var fd = new FormData(form)
-    ContractStore.add({
+
+    var result = await ContractStore.add({
       name:        fd.get('name'),
       company:     fd.get('company'),
       value:       parseFloat(fd.get('value')) || 0,
@@ -312,18 +321,25 @@ function initAddContractModal() {
       description: fd.get('description') || '',
       category:    fd.get('category')    || 'outros'
     })
+
+    if (!result) {
+      showToast('❌ Erro ao salvar contrato.')
+      return
+    }
+
     overlay.classList.remove('open')
     form.reset()
-    renderDashboard()
+    await renderDashboard()
     showToast('✅ Contrato adicionado com sucesso!')
   })
 }
 
-function viewContract(id) {
-  var contract = ContractStore.getAll().find(function (c) { return c.id === id })
+async function viewContract(id) {
+  var contracts = await ContractStore.getAll()
+  var contract  = contracts.find(function (c) { return c.id === id })
   if (!contract) return
 
-  var s       = getContractStatus(contract.endDate)
+  var s       = getContractStatus(contract.end_date)
   var overlay = document.getElementById('viewContractModal')
   var content = document.getElementById('viewContractContent')
   if (!overlay || !content) return
@@ -335,15 +351,15 @@ function viewContract(id) {
         '<span class="badge ' + s.class + '"><span class="status-dot ' + s.dot + '"></span>' + s.label + '</span>' +
       '</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">' +
-        '<div><div style="font-size:.75rem;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Empresa</div><div style="font-weight:600;">' + contract.company + '</div></div>' +
+        '<div><div style="font-size:.75rem;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Empresa</div><div style="font-weight:600;">' + contract.company_name + '</div></div>' +
         '<div><div style="font-size:.75rem;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Valor</div><div style="font-weight:700;color:var(--blue);font-size:1.1rem;">' + formatCurrency(contract.value) + '</div></div>' +
-        '<div><div style="font-size:.75rem;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Início</div><div>' + formatDate(contract.startDate) + '</div></div>' +
-        '<div><div style="font-size:.75rem;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Vencimento</div><div style="font-weight:600;">' + formatDate(contract.endDate) + '</div></div>' +
+        '<div><div style="font-size:.75rem;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Início</div><div>' + formatDate(contract.start_date) + '</div></div>' +
+        '<div><div style="font-size:.75rem;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Vencimento</div><div style="font-weight:600;">' + formatDate(contract.end_date) + '</div></div>' +
         (contract.category ? '<div><div style="font-size:.75rem;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Categoria</div><div style="text-transform:capitalize;">' + contract.category + '</div></div>' : '') +
       '</div>' +
       (contract.description ? '<div><div style="font-size:.75rem;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Descrição</div><div style="font-size:.9rem;color:var(--black-soft);line-height:1.65;padding:12px;background:var(--gray-light);border-radius:8px;">' + contract.description + '</div></div>' : '') +
       '<div style="display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--gray-mid);">' +
-        '<button class="btn btn-danger btn-sm" onclick="deleteContract(' + contract.id + ');closeViewModal();">🗑 Excluir</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="deleteContract(\'' + contract.id + '\');closeViewModal();">🗑 Excluir</button>' +
         '<button class="btn btn-secondary btn-sm" onclick="closeViewModal()">Fechar</button>' +
       '</div>' +
     '</div>'
@@ -351,16 +367,11 @@ function viewContract(id) {
   overlay.classList.add('open')
 }
 
-function deleteContract(id) {
+async function deleteContract(id) {
   if (!confirm('Tem certeza que deseja excluir este contrato?')) return
-  ContractStore.remove(id)
-  renderDashboard()
+  await ContractStore.remove(id)
+  await renderDashboard()
   showToast('🗑 Contrato removido.')
-}
-
-function closeViewModal() {
-  var overlay = document.getElementById('viewContractModal')
-  if (overlay) overlay.classList.remove('open')
 }
 
 // ============================================================
