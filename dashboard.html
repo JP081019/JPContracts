@@ -293,202 +293,235 @@
 <script src="js/script.js"></script>
 
 <script>
-  // Mobile sidebar
-  var mobileBtn   = document.getElementById('mobileSidebarBtn');
-  var sidebarEl   = document.getElementById('sidebar');
-  var overlayEl   = document.getElementById('sidebarOverlay');
-  var menuToggle  = document.getElementById('menuToggle');
+  // ---- MOBILE SIDEBAR ----
+  var mobileBtn  = document.getElementById('mobileSidebarBtn')
+  var sidebarEl  = document.getElementById('sidebar')
+  var overlayEl  = document.getElementById('sidebarOverlay')
+  var menuToggle = document.getElementById('menuToggle')
 
-  function toggleSidebar() { sidebarEl.classList.toggle('open'); overlayEl.classList.toggle('open'); }
-  mobileBtn  && mobileBtn.addEventListener('click', toggleSidebar);
-  menuToggle && menuToggle.addEventListener('click', toggleSidebar);
-  overlayEl  && overlayEl.addEventListener('click', toggleSidebar);
+  function toggleSidebar() {
+    sidebarEl.classList.toggle('open')
+    overlayEl.classList.toggle('open')
+  }
+
+  mobileBtn  && mobileBtn.addEventListener('click', toggleSidebar)
+  menuToggle && menuToggle.addEventListener('click', toggleSidebar)
+  overlayEl  && overlayEl.addEventListener('click', toggleSidebar)
 
   if (window.innerWidth <= 768) {
-    menuToggle && (menuToggle.style.display = 'flex');
-    var df = document.getElementById('dashFooter');
-    if (df) df.style.marginLeft = '0';
+    menuToggle && (menuToggle.style.display = 'flex')
+    var df = document.getElementById('dashFooter')
+    if (df) df.style.marginLeft = '0'
   }
 
-  // Topbar logout
- document.getElementById('topbarLogout') && document.getElementById('topbarLogout').addEventListener('click', async function() {
-  await supabase.auth.signOut();
-  window.location.href = 'login.html';
-});
+  // ---- TOPBAR LOGOUT ----
+  document.getElementById('topbarLogout') && document.getElementById('topbarLogout').addEventListener('click', async function() {
+    await window.supabaseClient.auth.signOut()
+    window.location.href = 'login.html'
+  })
 
-  // Add contract buttons
-  ['addContractBtn','addContractBtn2','addContractBtnPage'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.addEventListener('click', function() { document.getElementById('addContractModal').classList.add('open'); });
-  });
+  // ---- ADD CONTRACT BUTTONS ----
+  ;['addContractBtn','addContractBtn2','addContractBtnPage'].forEach(function(id) {
+    var el = document.getElementById(id)
+    if (el) el.addEventListener('click', function() {
+      document.getElementById('addContractModal').classList.add('open')
+    })
+  })
 
-  // Cancel & close modal
+  // ---- CANCEL & CLOSE MODAL ----
   document.getElementById('cancelModal') && document.getElementById('cancelModal').addEventListener('click', function() {
-    document.getElementById('addContractModal').classList.remove('open');
-    document.getElementById('addContractForm').reset();
-  });
+    document.getElementById('addContractModal').classList.remove('open')
+    document.getElementById('addContractForm').reset()
+  })
+
   document.getElementById('closeModal') && document.getElementById('closeModal').addEventListener('click', function() {
-    document.getElementById('addContractModal').classList.remove('open');
-    document.getElementById('addContractForm').reset();
-  });
+    document.getElementById('addContractModal').classList.remove('open')
+    document.getElementById('addContractForm').reset()
+  })
 
-  // Set today as default start date
-  var startInput = document.querySelector('[name="startDate"]');
-  if (startInput) startInput.value = new Date().toISOString().split('T')[0];
+  // ---- DEFAULT START DATE ----
+  var startInput = document.querySelector('[name="startDate"]')
+  if (startInput) startInput.value = new Date().toISOString().split('T')[0]
 
-  // Sidebar navigation
+  // ---- SIDEBAR NAVIGATION ----
   document.querySelectorAll('[data-section]').forEach(function(link) {
-    link.addEventListener('click', function() {
-      var section = this.dataset.section;
+    link.addEventListener('click', async function() {
+      var section = this.dataset.section
       var titles = {
-        dashboard: ['Dashboard', 'JP Contracts · Visão geral'],
-        contracts: ['Contratos', 'JP Contracts · Todos os contratos'],
-        alerts:    ['Alertas',   'JP Contracts · Central de alertas'],
-        reports:   ['Relatórios','JP Contracts · Análise e relatórios'],
-        settings:  ['Configurações','JP Contracts · Configurações']
-      };
+        dashboard: ['Dashboard',      'JP Contracts · Visão geral'],
+        contracts: ['Contratos',      'JP Contracts · Todos os contratos'],
+        alerts:    ['Alertas',        'JP Contracts · Central de alertas'],
+        reports:   ['Relatórios',     'JP Contracts · Análise e relatórios'],
+        settings:  ['Configurações',  'JP Contracts · Configurações']
+      }
+
       if (titles[section]) {
-        document.getElementById('topbarTitle').textContent  = titles[section][0];
-        document.getElementById('topbarBread').textContent = titles[section][1];
+        document.getElementById('topbarTitle').textContent = titles[section][0]
+        document.getElementById('topbarBread').textContent = titles[section][1]
       }
-      document.querySelectorAll('.dash-section').forEach(function(s) { s.style.display = 'none'; });
-      var target = document.getElementById('section-' + section);
-      if (target) target.style.display = 'block';
-      document.querySelectorAll('[data-section]').forEach(function(l) { l.classList.remove('active'); });
-      this.classList.add('active');
 
-      if (section === 'contracts') {
-        var tb2 = document.getElementById('contractsTableBody2');
-        if (tb2) renderTableIntoBody(tb2);
+      document.querySelectorAll('.dash-section').forEach(function(s) { s.style.display = 'none' })
+      var target = document.getElementById('section-' + section)
+      if (target) target.style.display = 'block'
+
+      document.querySelectorAll('[data-section]').forEach(function(l) { l.classList.remove('active') })
+      this.classList.add('active')
+
+      if (section === 'contracts') await renderTableIntoBody(document.getElementById('contractsTableBody2'))
+      if (section === 'alerts')    await renderAlertsSection()
+      if (section === 'reports')   await renderReports()
+
+      if (window.innerWidth <= 768) {
+        sidebarEl.classList.remove('open')
+        overlayEl.classList.remove('open')
       }
-      if (section === 'alerts')  renderAlertsSection();
-      if (section === 'reports') renderReports();
+    })
+  })
 
-      if (window.innerWidth <= 768) { sidebarEl.classList.remove('open'); overlayEl.classList.remove('open'); }
-    });
-  });
+  // ---- RENDER TABLE (seção Contratos) ----
+  async function renderTableIntoBody(tbody, search) {
+    if (!tbody) return
+    var contracts = await ContractStore.getAll()
+    if (!Array.isArray(contracts)) contracts = []
 
-  // Render contracts into a specific tbody
-  function renderTableIntoBody(tbody, search) {
-    var contracts = ContractStore.getAll();
-    var filtered = search ? contracts.filter(function(c) {
-      return c.name.toLowerCase().includes(search.toLowerCase()) || c.company.toLowerCase().includes(search.toLowerCase());
-    }) : contracts;
+    var filtered = search
+      ? contracts.filter(function(c) {
+          return c.name.toLowerCase().includes(search.toLowerCase()) ||
+                 c.company_name.toLowerCase().includes(search.toLowerCase())
+        })
+      : contracts
 
     if (!filtered.length) {
-      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Nenhum contrato encontrado</div><div class="empty-desc">Adicione seu primeiro contrato</div></div></td></tr>';
-      return;
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Nenhum contrato encontrado</div><div class="empty-desc">Adicione seu primeiro contrato</div></div></td></tr>'
+      return
     }
+
     tbody.innerHTML = filtered.map(function(c) {
-      var s = getContractStatus(c.endDate);
-      var daysText = s.days < 0 ? 'Vencido há ' + Math.abs(s.days) + ' dias' : 'Vence em ' + s.days + ' dias';
+      var s = getContractStatus(c.end_date)
+      var daysText = s.days < 0
+        ? 'Vencido há ' + Math.abs(s.days) + ' dias'
+        : 'Vence em ' + s.days + ' dias'
       return '<tr>' +
         '<td><div style="font-weight:600;">' + c.name + '</div></td>' +
-        '<td><div style="color:var(--gray-text);font-size:.82rem;">' + c.company + '</div></td>' +
-        '<td>' + formatDate(c.endDate) + '</td>' +
-        '<td><span class="badge ' + s.class + '"><span class="status-dot ' + s.dot + '"></span>' + s.label + '</span><div style="font-size:.72rem;color:var(--gray-text);margin-top:3px;">' + daysText + '</div></td>' +
+        '<td><div style="color:var(--gray-text);font-size:.82rem;">' + c.company_name + '</div></td>' +
+        '<td>' + formatDate(c.end_date) + '</td>' +
+        '<td><span class="badge ' + s.class + '"><span class="status-dot ' + s.dot + '"></span>' + s.label + '</span>' +
+          '<div style="font-size:.72rem;color:var(--gray-text);margin-top:3px;">' + daysText + '</div></td>' +
         '<td style="font-weight:600;">' + formatCurrency(c.value) + '</td>' +
-        '<td><div class="table-actions"><button class="btn btn-sm btn-secondary" onclick="viewContract(' + c.id + ')">👁 Ver</button><button class="btn btn-sm btn-danger" onclick="deleteContract(' + c.id + ')">🗑</button></div></td>' +
-        '</tr>';
-    }).join('');
+        '<td><div class="table-actions">' +
+          '<button class="btn btn-sm btn-secondary" onclick="viewContract(\'' + c.id + '\')">👁 Ver</button>' +
+          '<button class="btn btn-sm btn-danger" onclick="deleteContract(\'' + c.id + '\')">🗑</button>' +
+        '</div></td>' +
+      '</tr>'
+    }).join('')
   }
 
-  // Alerts section
-  function renderAlertsSection() {
-    var contracts = ContractStore.getAll();
-    var expired  = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Vencido'; });
-    var expiring = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Vencendo'; });
-    var ok = contracts.length - expired.length - expiring.length;
+  // ---- ALERTS SECTION ----
+  async function renderAlertsSection() {
+    var contracts = await ContractStore.getAll()
+    if (!Array.isArray(contracts)) contracts = []
 
-    var statsRow = document.getElementById('alertsStatsRow');
+    var expired  = contracts.filter(function(c) { return getContractStatus(c.end_date).label === 'Vencido' })
+    var expiring = contracts.filter(function(c) { return getContractStatus(c.end_date).label === 'Vencendo' })
+    var ok       = contracts.length - expired.length - expiring.length
+
+    var statsRow = document.getElementById('alertsStatsRow')
     if (statsRow) {
       statsRow.innerHTML =
         '<div style="background:white;border-radius:12px;padding:18px;border:1.5px solid #fee2e2;text-align:center;"><div style="font-size:2rem;font-weight:800;color:var(--danger);">' + expired.length + '</div><div style="font-size:.8rem;color:var(--gray-text);">Contratos vencidos</div></div>' +
         '<div style="background:white;border-radius:12px;padding:18px;border:1.5px solid #fef3c7;text-align:center;"><div style="font-size:2rem;font-weight:800;color:var(--warning);">' + expiring.length + '</div><div style="font-size:.8rem;color:var(--gray-text);">Vencendo em breve</div></div>' +
-        '<div style="background:white;border-radius:12px;padding:18px;border:1.5px solid #d1fae5;text-align:center;"><div style="font-size:2rem;font-weight:800;color:var(--success);">' + ok + '</div><div style="font-size:.8rem;color:var(--gray-text);">Contratos regulares</div></div>';
+        '<div style="background:white;border-radius:12px;padding:18px;border:1.5px solid #d1fae5;text-align:center;"><div style="font-size:2rem;font-weight:800;color:var(--success);">' + ok + '</div><div style="font-size:.8rem;color:var(--gray-text);">Contratos regulares</div></div>'
     }
 
-    var expiredBody = document.getElementById('expiredTableBody');
+    var expiredBody = document.getElementById('expiredTableBody')
     if (expiredBody) {
       expiredBody.innerHTML = expired.length === 0
         ? '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🎉</div><div class="empty-title">Nenhum contrato vencido!</div></div></td></tr>'
         : expired.map(function(c) {
-            var s = getContractStatus(c.endDate);
-            return '<tr><td style="font-weight:600;">' + c.name + '</td><td style="color:var(--gray-text);">' + c.company + '</td><td>' + formatDate(c.endDate) + '</td><td><span class="badge badge-danger">' + Math.abs(s.days) + ' dias</span></td><td style="font-weight:600;">' + formatCurrency(c.value) + '</td><td><div class="table-actions"><button class="btn btn-sm btn-secondary" onclick="viewContract(' + c.id + ')">👁 Ver</button><button class="btn btn-sm btn-danger" onclick="deleteContract(' + c.id + ');renderAlertsSection();">🗑</button></div></td></tr>';
-          }).join('');
+            var s = getContractStatus(c.end_date)
+            return '<tr>' +
+              '<td style="font-weight:600;">' + c.name + '</td>' +
+              '<td style="color:var(--gray-text);">' + c.company_name + '</td>' +
+              '<td>' + formatDate(c.end_date) + '</td>' +
+              '<td><span class="badge badge-danger">' + Math.abs(s.days) + ' dias</span></td>' +
+              '<td style="font-weight:600;">' + formatCurrency(c.value) + '</td>' +
+              '<td><div class="table-actions">' +
+                '<button class="btn btn-sm btn-secondary" onclick="viewContract(\'' + c.id + '\')">👁 Ver</button>' +
+                '<button class="btn btn-sm btn-danger" onclick="deleteContract(\'' + c.id + '\');renderAlertsSection();">🗑</button>' +
+              '</div></td></tr>'
+          }).join('')
     }
 
-    var expiringBody = document.getElementById('expiringTableBody');
+    var expiringBody = document.getElementById('expiringTableBody')
     if (expiringBody) {
       expiringBody.innerHTML = expiring.length === 0
         ? '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">Nenhum contrato vencendo em breve!</div></div></td></tr>'
         : expiring.map(function(c) {
-            var s = getContractStatus(c.endDate);
-            return '<tr><td style="font-weight:600;">' + c.name + '</td><td style="color:var(--gray-text);">' + c.company + '</td><td>' + formatDate(c.endDate) + '</td><td><span class="badge badge-warning">' + s.days + ' dias</span></td><td style="font-weight:600;">' + formatCurrency(c.value) + '</td><td><div class="table-actions"><button class="btn btn-sm btn-secondary" onclick="viewContract(' + c.id + ')">👁 Ver</button></div></td></tr>';
-          }).join('');
+            var s = getContractStatus(c.end_date)
+            return '<tr>' +
+              '<td style="font-weight:600;">' + c.name + '</td>' +
+              '<td style="color:var(--gray-text);">' + c.company_name + '</td>' +
+              '<td>' + formatDate(c.end_date) + '</td>' +
+              '<td><span class="badge badge-warning">' + s.days + ' dias</span></td>' +
+              '<td style="font-weight:600;">' + formatCurrency(c.value) + '</td>' +
+              '<td><div class="table-actions">' +
+                '<button class="btn btn-sm btn-secondary" onclick="viewContract(\'' + c.id + '\')">👁 Ver</button>' +
+              '</div></td></tr>'
+          }).join('')
     }
   }
 
-  // Reports section
-  function renderReports() {
-    var contracts = ContractStore.getAll();
-    var active  = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Ativo'; });
-    var expiring = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Vencendo'; });
-    var expired = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Vencido'; });
-    var totalVal = contracts.reduce(function(s,c) { return s + (parseFloat(c.value)||0); }, 0);
-    var actPct = contracts.length ? Math.round((active.length/contracts.length)*100) : 0;
+  // ---- REPORTS SECTION ----
+  async function renderReports() {
+    var contracts = await ContractStore.getAll()
+    if (!Array.isArray(contracts)) contracts = []
 
-    var rs = document.getElementById('reportStats');
+    var active   = contracts.filter(function(c) { return getContractStatus(c.end_date).label === 'Ativo' })
+    var expiring = contracts.filter(function(c) { return getContractStatus(c.end_date).label === 'Vencendo' })
+    var expired  = contracts.filter(function(c) { return getContractStatus(c.end_date).label === 'Vencido' })
+    var totalVal = contracts.reduce(function(s,c) { return s + (parseFloat(c.value) || 0) }, 0)
+    var actPct   = contracts.length ? Math.round((active.length / contracts.length) * 100) : 0
+
+    var rs = document.getElementById('reportStats')
     if (rs) rs.innerHTML =
       '<div style="background:white;border-radius:var(--radius-lg);padding:22px;border:1px solid var(--gray-mid);"><div style="font-size:.75rem;color:var(--gray-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Total em carteira</div><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--blue);">' + formatCurrency(totalVal) + '</div></div>' +
       '<div style="background:white;border-radius:var(--radius-lg);padding:22px;border:1px solid var(--gray-mid);"><div style="font-size:.75rem;color:var(--gray-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Taxa de atividade</div><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--success);">' + actPct + '%</div></div>' +
-      '<div style="background:white;border-radius:var(--radius-lg);padding:22px;border:1px solid var(--gray-mid);"><div style="font-size:.75rem;color:var(--gray-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Média por contrato</div><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--black);">' + formatCurrency(contracts.length ? totalVal/contracts.length : 0) + '</div></div>';
+      '<div style="background:white;border-radius:var(--radius-lg);padding:22px;border:1px solid var(--gray-mid);"><div style="font-size:.75rem;color:var(--gray-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Média por contrato</div><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--black);">' + formatCurrency(contracts.length ? totalVal / contracts.length : 0) + '</div></div>'
 
-    var rc = document.getElementById('reportChart');
+    var rc = document.getElementById('reportChart')
     if (rc && contracts.length) {
       var bars = [
-        { label:'✅ Ativos', count:active.length, color:'var(--success)' },
-        { label:'⚠️ Vencendo em breve', count:expiring.length, color:'var(--warning)' },
-        { label:'🔴 Vencidos', count:expired.length, color:'var(--danger)' }
-      ];
+        { label: '✅ Ativos',             count: active.length,   color: 'var(--success)' },
+        { label: '⚠️ Vencendo em breve', count: expiring.length, color: 'var(--warning)' },
+        { label: '🔴 Vencidos',           count: expired.length,  color: 'var(--danger)'  }
+      ]
       rc.innerHTML = bars.map(function(b) {
-        var pct = Math.round((b.count/contracts.length)*100);
-        return '<div><div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px;"><span style="font-weight:500;">' + b.label + '</span><span style="font-weight:700;">' + b.count + ' (' + pct + '%)</span></div><div class="progress-bar-wrap" style="height:10px;"><div class="progress-bar" style="width:' + pct + '%;background:' + b.color + ';"></div></div></div>';
-      }).join('');
+        var pct = Math.round((b.count / contracts.length) * 100)
+        return '<div><div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px;"><span style="font-weight:500;">' + b.label + '</span><span style="font-weight:700;">' + b.count + ' (' + pct + '%)</span></div><div class="progress-bar-wrap" style="height:10px;"><div class="progress-bar" style="width:' + pct + '%;background:' + b.color + ';"></div></div></div>'
+      }).join('')
     }
   }
 
-  // Update progress bar after render
-  var origRD = window.renderDashboard;
-  window.renderDashboard = function() {
-    if (origRD) origRD();
-    setTimeout(function() {
-      var contracts = ContractStore.getAll();
-      var active = contracts.filter(function(c) { return getContractStatus(c.endDate).label === 'Ativo'; }).length;
-      var pct = contracts.length ? Math.round((active/contracts.length)*100) : 0;
-      var bar = document.getElementById('activeBar'); if (bar) bar.style.width = pct + '%';
-      var lbl = document.getElementById('activePercent'); if (lbl) lbl.textContent = pct + '%';
-    }, 150);
-  };
-
-  // Search on contracts page
-  var sp = document.getElementById('searchContractsPage');
+  // ---- SEARCH ----
+  var sp = document.getElementById('searchContractsPage')
   if (sp) sp.addEventListener('input', function() {
-    var tb2 = document.getElementById('contractsTableBody2');
-    if (tb2) renderTableIntoBody(tb2, this.value);
-  });
+    renderTableIntoBody(document.getElementById('contractsTableBody2'), this.value)
+  })
 
-  // Main search
-  var sc = document.getElementById('searchContracts');
-  if (sc) sc.addEventListener('input', function() { renderContractsList(this.value); });
+  var sc = document.getElementById('searchContracts')
+  if (sc) sc.addEventListener('input', function() { renderContractsList(this.value) })
 
-  // View modal close on overlay
+  // ---- MODAL CLOSE ON OVERLAY ----
   document.getElementById('viewContractModal') && document.getElementById('viewContractModal').addEventListener('click', function(e) {
-    if (e.target === this) closeViewModal();
-  });
+    if (e.target === this) closeViewModal()
+  })
+
   document.getElementById('addContractModal') && document.getElementById('addContractModal').addEventListener('click', function(e) {
-    if (e.target === this) { this.classList.remove('open'); document.getElementById('addContractForm').reset(); }
-  });
+    if (e.target === this) {
+      this.classList.remove('open')
+      document.getElementById('addContractForm').reset()
+    }
+  })
 </script>
 </body>
 </html>
