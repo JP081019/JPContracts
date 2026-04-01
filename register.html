@@ -185,7 +185,9 @@
       return
     }
 
-    // 2. Faz login imediatamente para ter sessão ativa
+    var userId = authResult.data.user.id
+
+    // 2. Faz login para ter sessão ativa
     var loginResult = await window.supabaseClient.auth.signInWithPassword({
       email:    email,
       password: password
@@ -198,51 +200,22 @@
       return
     }
 
-    var userId = loginResult.data.user.id
+    // 3. Chama a função que cria empresa e usuário
+    var fnResult = await window.supabaseClient.rpc('handle_new_user_registration', {
+      company_name: companyName,
+      user_name:    userName,
+      user_email:   email,
+      user_id:      userId
+    })
 
-    // 3. Cria a empresa na tabela companies
-    var trialEndsAt = new Date()
-    trialEndsAt.setDate(trialEndsAt.getDate() + 7)
-
-    var companyResult = await window.supabaseClient
-      .from('companies')
-      .insert({
-        name:          companyName,
-        email:         email,
-        plan:          'trial',
-        trial_ends_at: trialEndsAt.toISOString()
-      })
-      .select()
-      .single()
-
-    if (companyResult.error) {
-      showRegisterError('Erro ao criar empresa: ' + companyResult.error.message)
+    if (fnResult.error) {
+      showRegisterError('Erro ao configurar conta: ' + fnResult.error.message)
       btn.disabled        = false
       btnText.textContent = '🚀 Criar conta grátis'
       return
     }
 
-    var companyId = companyResult.data.id
-
-    // 4. Cria o usuário na tabela users
-    var userResult = await window.supabaseClient
-      .from('users')
-      .insert({
-        id:         userId,
-        company_id: companyId,
-        name:       userName,
-        email:      email,
-        role:       'owner'
-      })
-
-    if (userResult.error) {
-      showRegisterError('Erro ao salvar usuário: ' + userResult.error.message)
-      btn.disabled        = false
-      btnText.textContent = '🚀 Criar conta grátis'
-      return
-    }
-
-    // 5. Tudo certo — redireciona para o dashboard
+    // 4. Tudo certo — redireciona para o dashboard
     window.location.href = 'dashboard.html'
   })
 </script>
