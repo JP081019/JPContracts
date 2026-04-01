@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar conta — JP Contracts</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+  <style>
+    body { margin:0; background:var(--gray-light); }
+    .register-grid { display:grid; grid-template-columns:1fr 1fr; min-height:100vh; }
+    .register-left {
+      background:linear-gradient(145deg,var(--blue-dark) 0%,var(--blue) 60%,#1e40af 100%);
+      padding:48px 40px; display:flex; flex-direction:column;
+      justify-content:center; position:sticky; top:0; min-height:100vh;
+    }
+    .register-left-inner { max-width:380px; }
+    .register-brand { display:flex; align-items:center; gap:12px; text-decoration:none; margin-bottom:40px; }
+    .register-brand img { width:46px; height:46px; object-fit:contain; filter:brightness(0) invert(1); }
+    .register-brand-name { font-family:var(--font-display); font-weight:700; font-size:1.15rem; color:white; }
+    .register-brand-name span { color:rgba(255,255,255,0.6); }
+    .register-right { display:flex; align-items:center; justify-content:center; padding:40px 32px; background:var(--gray-light); }
+    .register-form-wrap { width:100%; max-width:480px; }
+    .register-card { background:white; border-radius:20px; padding:32px; box-shadow:var(--shadow-md); border:1.5px solid var(--gray-mid); }
+    .trial-badge { background:var(--blue-xlight); border:1.5px solid var(--blue); border-radius:12px; padding:14px 18px; margin-bottom:24px; display:flex; align-items:center; gap:10px; }
+    .trial-badge span { font-size:.88rem; color:var(--blue-dark); font-weight:500; }
+    #registerError { display:none; margin-bottom:16px; }
+    @media(max-width:768px){ .register-grid{grid-template-columns:1fr;} .register-left{display:none;} }
+  </style>
+</head>
+<body>
+
+<div class="register-grid">
+
+  <!-- LEFT PANEL -->
+  <div class="register-left">
+    <div class="register-left-inner">
+      <a href="index.html" class="register-brand">
+        <img src="logo.png" alt="JP Contracts">
+        <div class="register-brand-name">JP Contracts <span>· JP Dev</span></div>
+      </a>
+      <h2 style="color:white;font-size:1.9rem;font-weight:800;margin-bottom:12px;line-height:1.25;">Comece grátis<br>por 7 dias</h2>
+      <p style="color:rgba(255,255,255,.65);font-size:.95rem;line-height:1.65;margin-bottom:32px;">Sem cartão de crédito. Cancele quando quiser. Suporte incluído.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.75);font-size:.88rem;">
+          <span style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:white;flex-shrink:0;">✓</span>
+          7 dias grátis — sem cartão de crédito
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.75);font-size:.88rem;">
+          <span style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:white;flex-shrink:0;">✓</span>
+          Dashboard completo com alertas
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.75);font-size:.88rem;">
+          <span style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:white;flex-shrink:0;">✓</span>
+          Cadastro de contratos ilimitado no trial
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.75);font-size:.88rem;">
+          <span style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:white;flex-shrink:0;">✓</span>
+          Suporte por WhatsApp incluso
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="register-right">
+    <div class="register-form-wrap">
+      <div style="text-align:center;margin-bottom:28px;">
+        <h1 style="font-size:1.7rem;font-weight:800;margin-bottom:8px;color:var(--black);">Criar sua conta</h1>
+        <p style="color:var(--gray-text);font-size:.9rem;">Preencha os dados abaixo para começar</p>
+      </div>
+
+      <!-- Trial badge -->
+      <div class="trial-badge">
+        <span style="font-size:1.4rem;">🎁</span>
+        <span><strong>7 dias grátis</strong> — sem cartão de crédito necessário</span>
+      </div>
+
+      <!-- Error alert -->
+      <div id="registerError" class="alert alert-danger">
+        <span>⚠️</span>
+        <span id="registerErrorMsg">Erro ao criar conta</span>
+      </div>
+
+      <div class="register-card">
+        <form id="registerForm" autocomplete="on">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div class="form-group">
+              <label class="form-label" for="userName">👤 Seu nome</label>
+              <input class="form-input" type="text" id="userName" name="userName" placeholder="João Silva" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="companyName">🏢 Nome da empresa</label>
+              <input class="form-input" type="text" id="companyName" name="companyName" placeholder="Minha Empresa Ltda." required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">📧 Email</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="seu@email.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">🔒 Senha</label>
+            <input class="form-input" type="password" id="password" name="password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="passwordConfirm">🔒 Confirmar senha</label>
+            <input class="form-input" type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Repita a senha" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg" id="registerBtn" style="margin-top:8px;">
+            <span id="registerBtnText">🚀 Criar conta grátis</span>
+          </button>
+
+        </form>
+      </div>
+
+      <p style="text-align:center;margin-top:20px;font-size:.83rem;color:var(--gray-text);">
+        Já tem uma conta? <a href="login.html" style="color:var(--blue);font-weight:500;text-decoration:none;">Entrar →</a>
+      </p>
+      <div style="text-align:center;margin-top:16px;">
+        <a href="index.html" style="font-size:.82rem;color:var(--gray-text);text-decoration:none;">← Voltar ao site</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/script.js"></script>
+<script>
+  function showRegisterError(msg) {
+    var box   = document.getElementById('registerError')
+    var msgEl = document.getElementById('registerErrorMsg')
+    if (msgEl) msgEl.textContent = msg
+    box.style.display = 'flex'
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', async function (e) {
+    e.preventDefault()
+
+    var userName        = document.getElementById('userName').value.trim()
+    var companyName     = document.getElementById('companyName').value.trim()
+    var email           = document.getElementById('email').value.trim()
+    var password        = document.getElementById('password').value
+    var passwordConfirm = document.getElementById('passwordConfirm').value
+    var btn             = document.getElementById('registerBtn')
+    var btnText         = document.getElementById('registerBtnText')
+
+    // Esconde erro anterior
+    document.getElementById('registerError').style.display = 'none'
+
+    // Validações
+    if (!userName || !companyName || !email || !password) {
+      showRegisterError('Preencha todos os campos.')
+      return
+    }
+
+    if (password !== passwordConfirm) {
+      showRegisterError('As senhas não coincidem.')
+      return
+    }
+
+    if (password.length < 6) {
+      showRegisterError('A senha precisa ter no mínimo 6 caracteres.')
+      return
+    }
+
+    // Desabilita botão
+    btn.disabled    = true
+    btnText.textContent = 'Criando conta...'
+
+    // 1. Cria usuário no Supabase Auth
+    var authResult = await window.supabaseClient.auth.signUp({
+      email:    email,
+      password: password,
+      options: {
+        data: { name: userName }
+      }
+    })
+
+    if (authResult.error) {
+      showRegisterError('Erro ao criar conta: ' + authResult.error.message)
+      btn.disabled    = false
+      btnText.textContent = '🚀 Criar conta grátis'
+      return
+    }
+
+    var userId = authResult.data.user.id
+
+    // 2. Cria a empresa na tabela companies
+    var trialEndsAt = new Date()
+    trialEndsAt.setDate(trialEndsAt.getDate() + 7)
+
+    var companyResult = await window.supabaseClient
+      .from('companies')
+      .insert({
+        name:          companyName,
+        email:         email,
+        plan:          'trial',
+        trial_ends_at: trialEndsAt.toISOString()
+      })
+      .select()
+      .single()
+
+    if (companyResult.error) {
+      showRegisterError('Erro ao criar empresa: ' + companyResult.error.message)
+      btn.disabled    = false
+      btnText.textContent = '🚀 Criar conta grátis'
+      return
+    }
+
+    var companyId = companyResult.data.id
+
+    // 3. Cria o usuário na tabela users
+    var userResult = await window.supabaseClient
+      .from('users')
+      .insert({
+        id:         userId,
+        company_id: companyId,
+        name:       userName,
+        email:      email,
+        role:       'owner'
+      })
+
+    if (userResult.error) {
+      showRegisterError('Erro ao salvar usuário: ' + userResult.error.message)
+      btn.disabled    = false
+      btnText.textContent = '🚀 Criar conta grátis'
+      return
+    }
+
+    // 4. Tudo certo — redireciona para o dashboard
+    window.location.href = 'dashboard.html'
+  })
+</script>
+
+</body>
+</html>
