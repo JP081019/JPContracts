@@ -149,10 +149,8 @@
     var btn             = document.getElementById('registerBtn')
     var btnText         = document.getElementById('registerBtnText')
 
-    // Esconde erro anterior
     document.getElementById('registerError').style.display = 'none'
 
-    // Validações
     if (!userName || !companyName || !email || !password) {
       showRegisterError('Preencha todos os campos.')
       return
@@ -168,8 +166,7 @@
       return
     }
 
-    // Desabilita botão
-    btn.disabled    = true
+    btn.disabled        = true
     btnText.textContent = 'Criando conta...'
 
     // 1. Cria usuário no Supabase Auth
@@ -183,14 +180,27 @@
 
     if (authResult.error) {
       showRegisterError('Erro ao criar conta: ' + authResult.error.message)
-      btn.disabled    = false
+      btn.disabled        = false
       btnText.textContent = '🚀 Criar conta grátis'
       return
     }
 
-    var userId = authResult.data.user.id
+    // 2. Faz login imediatamente para ter sessão ativa
+    var loginResult = await window.supabaseClient.auth.signInWithPassword({
+      email:    email,
+      password: password
+    })
 
-    // 2. Cria a empresa na tabela companies
+    if (loginResult.error) {
+      showRegisterError('Erro ao iniciar sessão: ' + loginResult.error.message)
+      btn.disabled        = false
+      btnText.textContent = '🚀 Criar conta grátis'
+      return
+    }
+
+    var userId = loginResult.data.user.id
+
+    // 3. Cria a empresa na tabela companies
     var trialEndsAt = new Date()
     trialEndsAt.setDate(trialEndsAt.getDate() + 7)
 
@@ -207,14 +217,14 @@
 
     if (companyResult.error) {
       showRegisterError('Erro ao criar empresa: ' + companyResult.error.message)
-      btn.disabled    = false
+      btn.disabled        = false
       btnText.textContent = '🚀 Criar conta grátis'
       return
     }
 
     var companyId = companyResult.data.id
 
-    // 3. Cria o usuário na tabela users
+    // 4. Cria o usuário na tabela users
     var userResult = await window.supabaseClient
       .from('users')
       .insert({
@@ -227,12 +237,12 @@
 
     if (userResult.error) {
       showRegisterError('Erro ao salvar usuário: ' + userResult.error.message)
-      btn.disabled    = false
+      btn.disabled        = false
       btnText.textContent = '🚀 Criar conta grátis'
       return
     }
 
-    // 4. Tudo certo — redireciona para o dashboard
+    // 5. Tudo certo — redireciona para o dashboard
     window.location.href = 'dashboard.html'
   })
 </script>
