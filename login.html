@@ -208,8 +208,10 @@
       return;
     }
 
-    // Login OK — redireciona para o dashboard
-    window.location.href = 'dashboard.html';
+    // Login OK — verifica se tinha destino salvo
+    var redirect = sessionStorage.getItem('redirect_after_login')
+    sessionStorage.removeItem('redirect_after_login')
+    window.location.href = redirect || 'dashboard.html'
   });
 </script>
 

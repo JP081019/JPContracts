@@ -80,6 +80,8 @@
     // 1. Verifica se está logado
     var authResult = await window.supabaseClient.auth.getUser()
     if (!authResult.data.user) {
+      // Salva a URL do checkout para voltar depois do login
+      sessionStorage.setItem('redirect_after_login', window.location.href)
       window.location.href = 'login.html'
       return
     }
