@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — JP Contracts</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+  <style>
+    body { margin:0; background:var(--gray-light); }
+    .checkout-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .checkout-card { background:white; border-radius:24px; padding:40px; width:100%; max-width:480px; box-shadow:var(--shadow-lg); border:1.5px solid var(--gray-mid); }
+    .checkout-logo { display:flex; align-items:center; gap:10px; margin-bottom:32px; font-family:var(--font-display); font-weight:700; font-size:1.1rem; }
+    .checkout-logo img { width:40px; height:40px; object-fit:contain; }
+    .plan-summary { background:var(--blue-xlight); border-radius:14px; padding:20px; margin-bottom:28px; }
+    .plan-summary-name { font-family:var(--font-display); font-size:1.2rem; font-weight:800; color:var(--blue-dark); margin-bottom:6px; }
+    .plan-summary-price { font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--blue); }
+    .plan-summary-price span { font-size:0.9rem; color:var(--gray-text); font-weight:400; }
+    .plan-features { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+    .plan-feature { display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--blue-dark); }
+    #mp-button { margin-top:8px; }
+    .loading { text-align:center; padding:20px; color:var(--gray-text); font-size:0.9rem; }
+    .error-box { background:#fee2e2; color:#991b1b; border-radius:10px; padding:14px; font-size:0.88rem; margin-bottom:16px; display:none; }
+    .secure-badge { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:20px; font-size:0.78rem; color:var(--gray-text); }
+  </style>
+</head>
+<body>
+
+<div class="checkout-wrap">
+  <div class="checkout-card">
+
+    <div class="checkout-logo">
+      <img src="logo.png" alt="JP Contracts">
+      <span>JP <span style="color:var(--blue);">Contracts</span></span>
+    </div>
+
+    <div id="errorBox" class="error-box"></div>
+
+    <div id="planSummary" class="plan-summary">
+      <div class="loading">⏳ Carregando plano...</div>
+    </div>
+
+    <div id="mp-button">
+      <div class="loading">⏳ Preparando checkout...</div>
+    </div>
+
+    <div class="secure-badge">
+      🔒 Pagamento seguro via Mercado Pago
+    </div>
+
+    <p style="text-align:center;margin-top:16px;font-size:0.82rem;color:var(--gray-text);">
+      <a href="dashboard.html" style="color:var(--blue);">← Voltar ao dashboard</a>
+    </p>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script src="js/script.js"></script>
+<script src="js/mercadopago.js"></script>
+<script>
+  // Planos com features para exibir
+  const FEATURES = {
+    basico:  ['Até 30 contratos', 'Alertas por email', 'Dashboard completo', 'Suporte por chat'],
+    pro:     ['Contratos ilimitados', 'Alertas email + WhatsApp', 'Relatórios avançados', 'Até 5 usuários', 'Suporte prioritário'],
+    premium: ['Contratos ilimitados', 'Todos os canais de alerta', 'Relatórios + exportação', 'Usuários ilimitados', 'Suporte 24/7 dedicado']
+  }
+
+  const PRECOS = { basico: 'R$ 97', pro: 'R$ 197', premium: 'R$ 397' }
+  const NOMES  = { basico: 'Plano Básico', pro: 'Plano Pro', premium: 'Plano Premium' }
+
+  function showError(msg) {
+    var box = document.getElementById('errorBox')
+    box.textContent = '⚠️ ' + msg
+    box.style.display = 'block'
+  }
+
+  async function initCheckout() {
+    // 1. Verifica se está logado
+    var authResult = await window.supabaseClient.auth.getUser()
+    if (!authResult.data.user) {
+      window.location.href = 'login.html'
+      return
+    }
+
+    // 2. Pega o plano da URL (?plano=pro)
+    var params  = new URLSearchParams(window.location.search)
+    var planId  = params.get('plano')
+
+    if (!planId || !PLANOS[planId]) {
+      showError('Plano inválido. Volte para a página de planos.')
+      return
+    }
+
+    // 3. Exibe resumo do plano
+    var summary = document.getElementById('planSummary')
+    summary.innerHTML =
+      '<div class="plan-summary-name">' + NOMES[planId] + '</div>' +
+      '<div class="plan-summary-price">' + PRECOS[planId] + '<span>/mês</span></div>' +
+      '<div class="plan-features">' +
+        FEATURES[planId].map(function(f) {
+          return '<div class="plan-feature"><span style="color:var(--blue);">✓</span>' + f + '</div>'
+        }).join('') +
+      '</div>'
+
+    // 4. Busca company_id do usuário
+    var userResult = await window.supabaseClient
+      .from('users')
+      .select('company_id')
+      .eq('id', authResult.data.user.id)
+      .single()
+
+    if (userResult.error) {
+      showError('Erro ao buscar dados da conta.')
+      return
+    }
+
+    var companyId = userResult.data.company_id
+
+    // 5. Registra intenção de pagamento no banco
+    var fnResult = await window.supabaseClient.rpc('create_payment_preference', {
+      plan_id:    planId,
+      company_id: companyId
+    })
+
+    if (fnResult.error) {
+      showError('Erro ao preparar pagamento: ' + fnResult.error.message)
+      return
+    }
+
+    // 6. Cria preferência no Mercado Pago via Edge Function
+    var prefResult = await fetch('https://gvnfvmzlcqwoxzzhgebs.supabase.co/functions/v1/create-preference', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + (await window.supabaseClient.auth.getSession()).data.session.access_token
+      },
+      body: JSON.stringify({
+        plan_id:    planId,
+        company_id: companyId,
+        user_email: authResult.data.user.email
+      })
+    })
+
+    var prefData = await prefResult.json()
+
+    if (prefData.error) {
+      showError('Erro ao criar preferência de pagamento.')
+      return
+    }
+
+    // 7. Renderiza botão do Mercado Pago
+    var mp = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' })
+    var bricksBuilder = mp.bricks()
+
+    document.getElementById('mp-button').innerHTML = ''
+
+    await bricksBuilder.create('wallet', 'mp-button', {
+      initialization: { preferenceId: prefData.preference_id }
+    })
+  }
+
+  initCheckout()
+</script>
+
+</body>
+</html>

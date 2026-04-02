@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagamento Aprovado — JP Contracts</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+  <style>
+    body { margin:0; background:var(--gray-light); }
+    .success-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .success-card { background:white; border-radius:24px; padding:48px 40px; width:100%; max-width:480px; box-shadow:var(--shadow-lg); border:1.5px solid var(--gray-mid); text-align:center; }
+    .success-icon { width:80px; height:80px; background:#d1fae5; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; margin:0 auto 24px; }
+    .success-title { font-family:var(--font-display); font-size:1.8rem; font-weight:800; color:var(--black); margin-bottom:12px; }
+    .success-desc { color:var(--gray-text); font-size:0.95rem; line-height:1.7; margin-bottom:32px; }
+    .plan-activated { background:#d1fae5; border-radius:12px; padding:16px 20px; margin-bottom:28px; display:flex; align-items:center; gap:12px; }
+    .plan-activated-text { text-align:left; }
+    .plan-activated-label { font-size:0.75rem; color:#065f46; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
+    .plan-activated-name { font-family:var(--font-display); font-weight:700; color:#065f46; font-size:1.1rem; }
+    @media(max-width:480px){ .success-card{ padding:32px 24px; } }
+  </style>
+</head>
+<body>
+
+<div class="success-wrap">
+  <div class="success-card">
+
+    <div class="success-icon">✅</div>
+
+    <h1 class="success-title">Pagamento aprovado!</h1>
+    <p class="success-desc">Seu plano foi ativado com sucesso. Agora você tem acesso completo a todos os recursos do JP Contracts.</p>
+
+    <div class="plan-activated">
+      <span style="font-size:2rem;">🎉</span>
+      <div class="plan-activated-text">
+        <div class="plan-activated-label">Plano ativado</div>
+        <div class="plan-activated-name" id="planName">Carregando...</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <a href="dashboard.html" class="btn btn-primary btn-block btn-lg">
+        🚀 Ir para o dashboard
+      </a>
+      <a href="index.html" class="btn btn-secondary btn-block">
+        Voltar ao site
+      </a>
+    </div>
+
+    <p style="margin-top:24px;font-size:0.78rem;color:var(--gray-text);">
+      Dúvidas? Fale conosco pelo 
+      <a href="https://wa.me/5548996656319" style="color:var(--blue);font-weight:600;">WhatsApp</a>
+    </p>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/script.js"></script>
+<script>
+  var NOMES = { basico: 'Plano Básico', pro: 'Plano Pro', premium: 'Plano Premium' }
+
+  async function initSuccess() {
+    var params  = new URLSearchParams(window.location.search)
+    var planId  = params.get('plano')
+    var planName = document.getElementById('planName')
+
+    if (planId && NOMES[planId]) {
+      planName.textContent = NOMES[planId]
+    } else {
+      planName.textContent = 'Plano ativado'
+    }
+
+    // Redireciona para dashboard após 5 segundos
+    setTimeout(function() {
+      window.location.href = 'dashboard.html'
+    }, 5000)
+  }
+
+  initSuccess()
+</script>
+
+</body>
+</html>
