@@ -130,11 +130,21 @@
     }
 
     // 6. Cria preferência no Mercado Pago via Edge Function
+    // Busca a sessão atual
+    var sessionResult = await window.supabaseClient.auth.getSession()
+    var accessToken   = sessionResult.data.session?.access_token
+
+    if (!accessToken) {
+    window.location.href = 'login.html'
+    return
+    }
+
     var prefResult = await fetch('https://gvnfvmzlcqwoxzzhgebs.supabase.co/functions/v1/create-preference', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + (await window.supabaseClient.auth.getSession()).data.session.access_token
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + accessToken,
+        'apikey':        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.   eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2bmZ2bXpsY3F3b3h6emhnZWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MTIzNjYsImV4cCI6MjA4OTk4ODM2Nn0.KIOn1nFXeMhHHTDPfILPJuBHA8iKsZrBog6oz7PCyEs'
       },
       body: JSON.stringify({
         plan_id:    planId,
